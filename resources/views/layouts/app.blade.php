@@ -151,33 +151,25 @@
                     </div>
 
                     <!-- User Menu -->
-                    <div class="flex items-center space-x-4">
-                        <button class="text-gray-600 hover:text-gray-900">
+                    <div class="relative">
+                        <button id="settingsButton" class="text-gray-600 hover:text-gray-900">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
+                            <span class="sr-only">Configurações</span>
                         </button>
-                        <button class="text-gray-600 hover:text-gray-900">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                        </button>
-                        <div class="relative">
-                            <button class="flex items-center text-gray-600 hover:text-gray-900">
-                                <span class="mr-2">Configurações</span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                </svg>
-                            </button>
-                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Temas</a>
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Interface de Linguagem</a>
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Idioma dos Capítulos</a>
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Filtro de Conteúdo</a>
-                                <div class="border-t border-gray-200"></div>
-                                <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logar</a>
-                                <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Registrar</a>
+                        <div id="settingsMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+                            <div class="p-4">
+                                <h3 class="text-gray-700 font-medium mb-4">Configurações</h3>
+                                <div class="space-y-2">
+                                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Temas</a>
+                                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Interface de Linguagem</a>
+                                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Idioma dos Capítulos</a>
+                                    <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Filtro de Conteúdo</a>
+                                    <div class="border-t border-gray-200 my-2"></div>
+                                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Logar</a>
+                                    <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Registrar</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -226,5 +218,27 @@
 
     <!-- Scripts -->
     @vite(['resources/js/app.js'])
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsButton = document.getElementById('settingsButton');
+            const settingsMenu = document.getElementById('settingsMenu');
+
+            // Initialize menu as hidden
+            settingsMenu.classList.add('hidden');
+
+            // Toggle settings menu when clicking the gear icon
+            settingsButton.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent click from bubbling up
+                settingsMenu.classList.toggle('hidden');
+            });
+
+            // Close settings menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!settingsMenu.contains(e.target) && !settingsButton.contains(e.target)) {
+                    settingsMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
