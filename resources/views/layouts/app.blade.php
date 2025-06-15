@@ -292,18 +292,20 @@
             });
         }
 
-        // Smooth scrolling for sidebar links
-        document.querySelectorAll('nav a').forEach(anchor => {
+        // Smooth scrolling for anchor links only (links starting with #)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
-                e.preventDefault();
                 const href = this.getAttribute('href');
-                const target = document.querySelector(href);
-                
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                if (href !== '#') {  // Only prevent default for anchor links
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
                 }
             });
         });
