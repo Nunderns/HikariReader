@@ -11,19 +11,36 @@
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen bg-gray-100">
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-white shadow-lg transform transition-transform duration-300">
-            <div class="p-4">
-                <img src="{{ asset('images/logo.png') }}" alt="HikariReader" class="w-32 mb-6">
-                
-                <button id="closeSidebar" class="text-gray-500 hover:text-gray-700 mb-6">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
+        <aside id="sidebar" class="w-64 bg-white shadow-lg transform transition-transform duration-300 min-h-screen flex flex-col overflow-y-auto custom-scrollbar fixed top-0 left-0 h-full z-30">
+            <div class="p-4 space-y-4">
+                <div class="flex items-center justify-between mb-6">
+                    <img src="{{ asset('images/logo.png') }}" alt="HikariReader" class="w-32">
+                    <button id="closeSidebar" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
                 
                 <nav class="space-y-4">
                     <!-- Main Navigation -->
@@ -130,10 +147,10 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Header -->
-            <header class="bg-white shadow-lg">
+            <header id="mainHeader" class="bg-white shadow-lg transition-all duration-300 ml-64">
                 <div class="flex justify-between items-center px-6 py-4">
                     <!-- Mobile Menu Button -->
-                    <button id="mobileMenuButton" class="lg:hidden text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900">
+                    <button id="mobileMenuButton" style="display:none" class="lg:hidden text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -159,7 +176,7 @@
                             <span class="sr-only">Configurações</span>
                         </button>
                         <div id="settingsMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
-                            <div class="p-4">
+                            <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
                                 <h3 class="text-gray-700 font-medium mb-4">Configurações</h3>
                                 <div class="space-y-2">
                                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Temas</a>
@@ -177,42 +194,12 @@
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+            <main id="mainContent" class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 transition-all duration-300 ml-64">
                 <div class="container mx-auto px-6 py-8">
                     <!-- Main Content Will Go Here -->
                     @yield('content')
                 </div>
             </main>
-
-            <!-- Footer -->
-            <footer class="bg-white shadow-lg">
-                <div class="container mx-auto px-6 py-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <!-- Social Links -->
-                        <div>
-                            <h3 class="text-gray-600 text-sm font-medium mb-4">Redes Sociais</h3>
-                            <div class="space-y-2">
-                                <a href="#" class="text-gray-600 hover:text-gray-900">Facebook</a>
-                                <a href="#" class="text-gray-600 hover:text-gray-900">Twitter</a>
-                                <a href="#" class="text-gray-600 hover:text-gray-900">Instagram</a>
-                                <a href="#" class="text-gray-600 hover:text-gray-900">Discord</a>
-                            </div>
-                        </div>
-
-                        <!-- Copyright -->
-                        <div>
-                            <h3 class="text-gray-600 text-sm font-medium mb-4">Direitos Autorais</h3>
-                            <p class="text-gray-600">© {{ date('Y') }} HikariReader. Todos os direitos reservados.</p>
-                        </div>
-
-                        <!-- About -->
-                        <div>
-                            <h3 class="text-gray-600 text-sm font-medium mb-4">Sobre</h3>
-                            <p class="text-gray-600">HikariReader é um leitor de mangá online com uma comunidade ativa e recursos avançados de leitura.</p>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 
@@ -220,22 +207,103 @@
     @vite(['resources/js/app.js'])
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const settingsButton = document.getElementById('settingsButton');
-            const settingsMenu = document.getElementById('settingsMenu');
+            const sidebar = document.getElementById('sidebar');
+            const closeSidebarButton = document.getElementById('closeSidebar');
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const mainContent = document.getElementById('mainContent');
+            const header = document.getElementById('mainHeader');
 
-            // Initialize menu as hidden
+            // Fecha a sidebar
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.add('transform');
+                // Remove ml-64 e adiciona ml-0
+                if (mainContent) {
+                    mainContent.classList.remove('ml-64');
+                    mainContent.classList.add('ml-0');
+                }
+                if (header) {
+                    header.classList.remove('ml-64');
+                    header.classList.add('ml-0');
+                }
+                mobileMenuButton.style.display = 'inline-flex';
+            }
+
+            // Abre a sidebar
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('transform');
+                if (window.innerWidth >= 1024) {
+                    if (mainContent) {
+                        mainContent.classList.remove('ml-0');
+                        mainContent.classList.add('ml-64');
+                    }
+                    if (header) {
+                        header.classList.remove('ml-0');
+                        header.classList.add('ml-64');
+                    }
+                }
+                mobileMenuButton.style.display = 'none';
+            }
+
+            // Inicialização
+            function initializeSidebar() {
+                if (window.innerWidth >= 1024) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            }
+            initializeSidebar();
+            window.addEventListener('resize', initializeSidebar);
+
+            // Botão para abrir sidebar
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', openSidebar);
+            }
+            // Botão para fechar sidebar
+            if (closeSidebarButton) {
+                closeSidebarButton.addEventListener('click', closeSidebar);
+            }
+            // Fecha sidebar ao clicar fora (apenas mobile)
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 1024 && sidebar && !sidebar.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                    if (!sidebar.classList.contains('-translate-x-full')) {
+                        closeSidebar();
+                    }
+                }
+            });
+        }); 
+
+        const settingsMenu = document.getElementById('settingsMenu');
+
+        if (settingsButton && settingsMenu) {
             settingsMenu.classList.add('hidden');
-
-            // Toggle settings menu when clicking the gear icon
-            settingsButton.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent click from bubbling up
+            
+            settingsButton.addEventListener('click', () => {
                 settingsMenu.classList.toggle('hidden');
             });
 
             // Close settings menu when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', (e) => {
                 if (!settingsMenu.contains(e.target) && !settingsButton.contains(e.target)) {
                     settingsMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // Smooth scrolling for sidebar links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                const target = document.querySelector(href);
+                
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
