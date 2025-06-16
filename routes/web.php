@@ -33,7 +33,27 @@ Route::get('/welcome', function () {
 
 // Seguindo Routes
 Route::get('/updates', [UpdatesController::class, 'index'])->name('updates');
-Route::get('/library', [LibraryController::class, 'index'])->name('library');
+
+// Rotas da Biblioteca
+Route::prefix('library')->name('library.')->group(function () {
+    // Rota principal que redireciona para a visualização apropriada
+    Route::get('/', [LibraryController::class, 'index'])->name('index');
+    
+    // Rotas que requerem autenticação
+    Route::middleware('auth')->group(function () {
+        Route::post('/store', [LibraryController::class, 'store'])->name('store');
+        Route::delete('/{manga}', [LibraryController::class, 'destroy'])->name('destroy');
+        
+        // Atualizar modo de visualização
+        Route::post('/update-view-mode', [LibraryController::class, 'updateViewMode'])
+            ->name('update-view-mode');
+            
+        // Atualizar status de leitura
+        Route::post('/update-status/{manga}', [LibraryController::class, 'updateStatus'])
+            ->name('update-status');
+    });
+});
+
 Route::get('/bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
 Route::get('/groups', [GroupsController::class, 'index'])->name('groups.index');
 Route::get('/history', [HistoryController::class, 'index'])->name('history');
