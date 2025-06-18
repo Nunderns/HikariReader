@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Manga;
 use App\Models\Chapter;
+use App\Models\Author;
+use App\Models\Tag;
 
 class HomeController extends Controller
 {
@@ -39,6 +41,30 @@ class HomeController extends Controller
             'popularMangas' => $popularMangas,
             'recentChapters' => $recentChapters,
             'recentMangas' => $recentMangas
+        ]);
+    }
+
+    /**
+     * Show the advanced search page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function advancedSearch()
+    {
+        // Get data for filters
+        $authors = Author::orderBy('name')->get();
+        $artists = Author::where('is_artist', true)->orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
+        
+        // Generate years for publication year filter
+        $currentYear = date('Y');
+        $years = range($currentYear, 1950);
+        
+        return view('advanced-search', [
+            'authors' => $authors,
+            'artists' => $artists,
+            'tags' => $tags,
+            'years' => $years
         ]);
     }
 }

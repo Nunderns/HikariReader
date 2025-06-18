@@ -184,8 +184,20 @@
                                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Idioma dos Capítulos</a>
                                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Filtro de Conteúdo</a>
                                     <div class="border-t border-gray-200 my-2"></div>
-                                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Logar</a>
-                                    <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Registrar</a>
+                                    
+                                    @auth
+                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Perfil</a>
+                                        <div class="border-t border-gray-200 my-2"></div>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                                                Sair
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Logar</a>
+                                        <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Registrar</a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
