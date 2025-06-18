@@ -67,4 +67,34 @@ class HomeController extends Controller
             'years' => $years
         ]);
     }
+
+    /**
+     * Show the latest updates page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function latestUpdates()
+    {
+        // Get the latest 50 chapters with their manga, ordered by release date
+        $chapters = Chapter::with(['manga' => function($query) {
+            $query->withCount('chapters');
+        }])
+        ->orderBy('created_at', 'desc')
+        ->paginate(20);
+        
+        // Group chapters by manga for the manga list
+        $mangas = Manga::with(['chapters' => function($query) {
+            $query->orderBy('chapter_number', 'desc');
+        }])
+        ->withCount('chapters')
+        ->orderBy('updated_at', 'desc')
+        ->take(10)
+        ->get();
+        
+        return view('latest-updates', [
+            'chapters' => $chapters,
+            'mangas' => $mangas,
+            'title' => 'Últimas Atualizações'
+        ]);
+    }
 }
