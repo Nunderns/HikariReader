@@ -97,4 +97,40 @@ class HomeController extends Controller
             'title' => 'Últimas Atualizações'
         ]);
     }
+    
+    /**
+     * Show recently added mangas.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function recentAdditions()
+    {
+        // Get recently added mangas with pagination
+        $mangas = Manga::with(['chapters' => function($query) {
+                $query->orderBy('chapter_number', 'desc');
+            }])
+            ->withCount('chapters')
+            ->with('genres')
+            ->orderBy('created_at', 'desc')
+            ->paginate(24);
+            
+        // Get latest chapters for the sidebar
+        $latestChapters = Chapter::with('manga')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+            
+        // Get popular tags
+        $popularTags = \App\Models\Tag::withCount('mangas')
+            ->orderBy('mangas_count', 'desc')
+            ->take(15)
+            ->get();
+        
+        return view('manga.recent-additions', [
+            'mangas' => $mangas,
+            'latestChapters' => $latestChapters,
+            'popularTags' => $popularTags,
+            'title' => 'Mangás Adicionados Recentemente'
+        ]);
+    }
 }
