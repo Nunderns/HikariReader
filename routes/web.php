@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sobre', [HomeController::class, 'about'])->name('about');
 Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
 Route::get('/welcome', function () {
     return view('welcome');

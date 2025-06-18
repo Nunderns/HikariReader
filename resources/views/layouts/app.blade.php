@@ -215,6 +215,23 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">&copy; {{ date('Y') }} Hikari Reader. Todos os direitos reservados.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="{{ route('about') }}" class="text-gray-600 hover:text-gray-900 text-sm">Sobre Nós</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Termos de Uso</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Política de Privacidade</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Contato</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     @vite(['resources/js/app.js'])
     <script>
