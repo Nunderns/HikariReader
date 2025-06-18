@@ -103,6 +103,23 @@ class HomeController extends Controller
      *
      * @return \Illuminate\View\View
      */
+    /**
+     * Show the about us page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function about()
+    {
+        return view('about', [
+            'title' => 'Sobre Nós - Hikari Reader'
+        ]);
+    }
+    
+    /**
+     * Show recently added mangas.
+     *
+     * @return \Illuminate\View\View
+     */
     public function recentAdditions()
     {
         // Get recently added mangas with pagination
