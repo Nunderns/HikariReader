@@ -184,8 +184,20 @@
                                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Idioma dos Capítulos</a>
                                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Filtro de Conteúdo</a>
                                     <div class="border-t border-gray-200 my-2"></div>
-                                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Logar</a>
-                                    <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Registrar</a>
+                                    
+                                    @auth
+                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Perfil</a>
+                                        <div class="border-t border-gray-200 my-2"></div>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                                                Sair
+                                            </button>
+                                        </form>
+                                    @else
+                                        <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Logar</a>
+                                        <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Registrar</a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
@@ -202,6 +214,23 @@
             </main>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 mt-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-600 text-sm">&copy; {{ date('Y') }} Hikari Reader. Todos os direitos reservados.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="{{ route('about') }}" class="text-gray-600 hover:text-gray-900 text-sm">Sobre Nós</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Termos de Uso</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Política de Privacidade</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 text-sm">Contato</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     @vite(['resources/js/app.js'])
