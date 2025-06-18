@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Manga extends Model
 {
@@ -38,6 +40,35 @@ class Manga extends Model
     public function libraryEntries(): HasMany
     {
         return $this->hasMany(LibraryEntry::class);
+    }
+    
+    /**
+     * The authors that belong to the manga.
+     */
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'manga_author')
+            ->wherePivot('role', 'writer')
+            ->withTimestamps();
+    }
+    
+    /**
+     * The artists that belong to the manga.
+     */
+    public function artists(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'manga_author')
+            ->wherePivot('role', 'artist')
+            ->withTimestamps();
+    }
+    
+    /**
+     * The tags that belong to the manga.
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'manga_tag')
+            ->withTimestamps();
     }
     
     /**

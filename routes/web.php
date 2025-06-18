@@ -24,6 +24,13 @@ Route::middleware('guest')->group(function () {
 // Authentication Routes (Authenticated)
 Route::middleware('auth')->group(function () {
     Route::post('logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+    
+    // Profile Routes
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [\App\Http\Controllers\ProfileController::class, 'showChangePasswordForm'])->name('password.change');
+    Route::post('/profile/change-password', [\App\Http\Controllers\ProfileController::class, 'changePassword'])->name('password.update');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
