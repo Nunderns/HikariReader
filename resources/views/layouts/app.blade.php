@@ -46,14 +46,6 @@
                     <!-- Main Navigation -->
                     <div class="space-y-2">
                         <h3 class="text-gray-600 text-sm font-medium px-2">Seguindo</h3>
-                        @can('viewAny', \App\Models\User::class)
-                        <a href="{{ route('users.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                            Usuários
-                        </a>
-                        @endcan
                         <a href="{{ route('updates') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -130,7 +122,7 @@
                             </svg>
                             Grupos
                         </a>
-                        <a href="{{ route('users.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+                        <a href="{{ route('users') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                             </svg>
@@ -194,12 +186,7 @@
                                     <div class="border-t border-gray-200 my-2"></div>
                                     
                                     @auth
-                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Meu Perfil</a>
-                                        
-                                        @can('viewAny', \App\Models\User::class)
-                                        <a href="{{ route('users.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Gerenciar Usuários</a>
-                                        @endcan
-                                        
+                                        <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Perfil</a>
                                         <div class="border-t border-gray-200 my-2"></div>
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf

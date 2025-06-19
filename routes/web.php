@@ -1,78 +1,84 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
 
-// Public Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/sobre', [HomeController::class, 'about'])->name('about');
-Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UpdatesController;
+use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\BookmarksController;
+use App\Http\Controllers\GroupsController;
+use App\Http\Controllers\HistoryController;
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
-    Route::get('login', 'App\Http\Controllers\Auth\LoginController@showLoginForm')->name('login');
-    Route::post('login', 'App\Http\Controllers\Auth\LoginController@login');
-    Route::post('logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
-    
-    // Registration Routes...
-    Route::get('register', 'App\Http\Controllers\Auth\RegisterController@showRegistrationForm')->name('register');
-    Route::post('register', 'App\Http\Controllers\Auth\RegisterController@register');
-    
-    // Password Reset Routes...
-    Route::get('password/reset', 'App\Http\Controllers\Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-    Route::post('password/email', 'App\Http\Controllers\Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-    Route::get('password/reset/{token}', 'App\Http\Controllers\Auth\ResetPasswordController@showResetForm')->name('password.reset');
-    Route::post('password/reset', 'App\Http\Controllers\Auth\ResetPasswordController@reset')->name('password.update');
+    Route::get('login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::get('register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [\App\Http\Controllers\Auth\RegisterController::class, 'register']);
+    Route::get('password/reset', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/email', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-// Authenticated Routes
+// Authentication Routes (Authenticated)
 Route::middleware('auth')->group(function () {
-    // User Management
-    Route::get('users', 'App\Http\Controllers\UserController@index')->name('users.index');
-    Route::get('users/{user}', 'App\Http\Controllers\UserController@show')->name('users.show');
+    Route::post('logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
     
-    // Profile
-    Route::get('profile', 'App\Http\Controllers\ProfileController@show')->name('profile.show');
-    Route::get('profile/edit', 'App\Http\Controllers\ProfileController@edit')->name('profile.edit');
-    Route::put('profile/update', 'App\Http\Controllers\ProfileController@update')->name('profile.update');
-    Route::get('profile/change-password', 'App\Http\Controllers\ProfileController@showChangePasswordForm')->name('password.change');
-    Route::post('profile/change-password', 'App\Http\Controllers\ProfileController@changePassword')->name('password.update');
+    // Profile Routes
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [\App\Http\Controllers\ProfileController::class, 'showChangePasswordForm'])->name('password.change');
+    Route::post('/profile/change-password', [\App\Http\Controllers\ProfileController::class, 'changePassword'])->name('password.update');
 });
 
-// Updates Route
-Route::get('/updates', [App\Http\Controllers\UpdatesController::class, 'index'])->name('updates');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sobre', [HomeController::class, 'about'])->name('about');
+Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 
-// Library Route
-Route::get('/library', [App\Http\Controllers\LibraryController::class, 'index'])->name('library.index');
+// Seguindo Routes
+Route::get('/updates', [UpdatesController::class, 'index'])->name('updates');
 
-// Other routes
-Route::get('/bookmarks', 'App\Http\Controllers\BookmarksController@index')->name('bookmarks');
-Route::get('/groups', 'App\Http\Controllers\GroupsController@index')->name('groups.index');
-Route::get('/history', 'App\Http\Controllers\HistoryController@index')->name('history');
-
-// Group Routes
-Route::get('/groups/community', 'App\Http\Controllers\GroupsController@community')->name('groups.community');
-
-// API Routes
-Route::prefix('api')->group(function () {
-    Route::get('/search/manga', 'App\Http\Controllers\HomeController@searchManga')->name('api.search.manga');
+// Rotas da Biblioteca
+Route::prefix('library')->name('library.')->group(function () {
+    // Rota principal que redireciona para a visualização apropriada
+    Route::get('/', [LibraryController::class, 'index'])->name('index');
     
+    // Rotas que requerem autenticação
     Route::middleware('auth')->group(function () {
-        Route::post('/library', 'App\Http\Controllers\LibraryController@store')->name('api.library.store');
-        Route::delete('/library/{manga}', 'App\Http\Controllers\LibraryController@destroy')->name('api.library.destroy');
+        Route::post('/store', [LibraryController::class, 'store'])->name('store');
+        Route::delete('/{manga}', [LibraryController::class, 'destroy'])->name('destroy');
+        
+        // Atualizar modo de visualização
+        Route::post('/update-view-mode', [LibraryController::class, 'updateViewMode'])
+            ->name('update-view-mode');
+            
+        // Atualizar status de leitura
+        Route::post('/update-status/{manga}', [LibraryController::class, 'updateStatus'])
+            ->name('update-status');
     });
 });
 
-// Random Manga
-Route::get('/random', 'App\Http\Controllers\HomeController@random')->name('random');
+Route::get('/bookmarks', [BookmarksController::class, 'index'])->name('bookmarks');
+Route::get('/groups', [GroupsController::class, 'index'])->name('groups.index');
+Route::get('/history', [HistoryController::class, 'index'])->name('history');
 
-// Forum Route
-Route::get('/forum', 'App\Http\Controllers\HomeController@forum')->name('forum');
+// Group Routes
+Route::get('/groups/community', [GroupsController::class, 'community'])->name('groups.community');
 
-// Latest Updates Route
-Route::get('/latest-updates', 'App\Http\Controllers\HomeController@latestUpdates')->name('latest.updates');
+// Títulos Routes
+Route::get('/advanced-search', [HomeController::class, 'advancedSearch'])->name('advanced.search');
+Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
+Route::get('/latest-updates', [HomeController::class, 'latestUpdates'])->name('latest.updates');
+Route::get('/random', [HomeController::class, 'random'])->name('random');
 
-// Advanced Search Route
-Route::get('/advanced-search', 'App\Http\Controllers\HomeController@advancedSearch')->name('advanced.search');
+// Comunidade Routes
+Route::get('/forum', [HomeController::class, 'forum'])->name('forum');
+Route::get('/users', [HomeController::class, 'users'])->name('users');
+
+// HikariReader Routes
+Route::get('/about', [HomeController::class, 'about'])->name('about');
