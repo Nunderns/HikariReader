@@ -61,6 +61,8 @@ Route::prefix('api')->group(function () {
     
     Route::middleware('auth')->group(function () {
         Route::post('/library', 'App\Http\Controllers\LibraryController@store')->name('api.library.store');
+        Route::post('/library/update-view-mode', 'App\Http\Controllers\LibraryController@updateViewMode')->name('library.update-view-mode');
+        Route::post('/library/{manga}/update-status', 'App\Http\Controllers\LibraryController@updateStatus')->name('library.update-status');
         Route::delete('/library/{manga}', 'App\Http\Controllers\LibraryController@destroy')->name('api.library.destroy');
     });
 });
