@@ -13,5 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'api/search/*',
+        'api/library/update-view-mode',
+        'api/library/*/update-status',
     ];
 }
