@@ -110,9 +110,19 @@ class HomeController extends Controller
      */
     public function about()
     {
-        return view('about', [
+        return view('home.about', [
             'title' => 'Sobre Nós - Hikari Reader'
         ]);
+    }
+    
+    /**
+     * Show the terms and policies page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function terms()
+    {
+        return view('terms');
     }
     
     /**
