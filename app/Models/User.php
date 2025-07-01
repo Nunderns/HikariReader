@@ -194,4 +194,9 @@ class User extends Authenticatable
         
         return $entry->fresh();
     }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }   
 }
