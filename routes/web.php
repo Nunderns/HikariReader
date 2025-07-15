@@ -48,6 +48,23 @@ Route::get('/updates', [App\Http\Controllers\UpdatesController::class, 'index'])
 // Library Route
 Route::get('/library', [App\Http\Controllers\LibraryController::class, 'index'])->name('library.index');
 
+// Manga Routes
+Route::get('/manga/{id}', [App\Http\Controllers\MangaController::class, 'show'])->name('manga.show');
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Dashboard
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    
+    Route::get('/dashboard', 'App\Http\Controllers\Admin\DashboardController@index')->name('dashboard');
+    
+    // Manga Routes
+    Route::resource('mangas', 'App\Http\Controllers\Admin\MangaController')->except(['show']);
+    Route::get('mangas/{manga}/confirm-delete', 'App\Http\Controllers\Admin\MangaController@confirmDelete')->name('mangas.confirm-delete');
+});
+
 // Other routes
 Route::get('/bookmarks', 'App\Http\Controllers\BookmarksController@index')->name('bookmarks');
 Route::get('/groups', 'App\Http\Controllers\GroupsController@index')->name('groups.index');

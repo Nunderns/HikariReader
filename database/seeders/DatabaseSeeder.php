@@ -13,11 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create test user if not exists
-        $user = User::firstOrCreate(
-            ['email' => 'test@example.com'],
+        // Create admin user if not exists
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
             [
-                'name' => 'Test User',
+                'name' => 'Admin',
+                'is_admin' => true,
                 'password' => bcrypt('password'),
             ]
         );
