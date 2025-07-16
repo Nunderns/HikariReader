@@ -40,6 +40,18 @@ class MangaController extends Controller
      */
     public function store(Request $request)
     {
+        // Prepare themes, converting comma-separated string to array
+        if ($request->has('themes') && is_string($request->themes)) {
+            $themes = array_filter(array_map('trim', explode(',', $request->themes)));
+            $request->merge(['themes' => $themes]);
+        }
+
+        // Prepare alt_titles, converting newline-separated string to array
+        if ($request->has('alt_titles') && is_string($request->alt_titles)) {
+            $alt_titles = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $request->alt_titles)));
+            $request->merge(['alt_titles' => $alt_titles]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'english_title' => 'nullable|string|max:255',
@@ -77,6 +89,19 @@ class MangaController extends Controller
 
         // Create slug
         $validated['slug'] = Str::slug($validated['title']);
+        
+        // Set default thumbnail if not provided
+        if (!isset($validated['thumbnail_url'])) {
+            $validated['thumbnail_url'] = '/images/default-thumbnail.jpg'; // Make sure this default image exists
+        }
+
+        // Remove fields that don't exist in the database yet
+        $fieldsToRemove = ['rating', 'rating_count', 'view_count'];
+        foreach ($fieldsToRemove as $field) {
+            if (array_key_exists($field, $validated)) {
+                unset($validated[$field]);
+            }
+        }
 
         // Create manga
         $manga = Manga::create($validated);
@@ -105,6 +130,18 @@ class MangaController extends Controller
      */
     public function update(Request $request, Manga $manga)
     {
+        // Prepare themes, converting comma-separated string to array
+        if ($request->has('themes') && is_string($request->themes)) {
+            $themes = array_filter(array_map('trim', explode(',', $request->themes)));
+            $request->merge(['themes' => $themes]);
+        }
+
+        // Prepare alt_titles, converting newline-separated string to array
+        if ($request->has('alt_titles') && is_string($request->alt_titles)) {
+            $alt_titles = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $request->alt_titles)));
+            $request->merge(['alt_titles' => $alt_titles]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'english_title' => 'nullable|string|max:255',
@@ -146,6 +183,14 @@ class MangaController extends Controller
         }
         if (isset($validated['alt_titles'])) {
             $validated['alt_titles'] = json_encode($validated['alt_titles']);
+        }
+
+        // Remove fields that don't exist in the database yet
+        $fieldsToRemove = ['rating', 'rating_count', 'view_count'];
+        foreach ($fieldsToRemove as $field) {
+            if (array_key_exists($field, $validated)) {
+                unset($validated[$field]);
+            }
         }
 
         // Update slug if title changed

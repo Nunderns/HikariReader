@@ -31,6 +31,19 @@ class Manga extends Model
         'serialization'
     ];
 
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'thumbnail_url' => '/images/default-thumbnail.jpg',
+        'cover_url' => '/images/default-cover.jpg',
+        'is_adult' => false,
+        'is_suggestive' => false,
+        'featured' => false
+    ];
+
     protected $casts = [
         'featured' => 'boolean',
         'is_adult' => 'boolean',
