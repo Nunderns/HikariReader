@@ -96,3 +96,35 @@ Route::get('/latest-updates', 'App\Http\Controllers\HomeController@latestUpdates
 
 // Advanced Search Route
 Route::get('/advanced-search', 'App\Http\Controllers\HomeController@advancedSearch')->name('advanced.search');
+
+// Admin Routes
+require __DIR__.'/admin.php';
+
+// Notification routes
+Route::middleware(['auth'])->group(function () {
+    // Mark single notification as read
+    Route::post('/notifications/{notification}/mark-as-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
+        ->name('notifications.mark-as-read');
+        
+    // Mark all notifications as read
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.mark-all-read');
+        
+    // AJAX endpoints
+    Route::post('/notifications/{notification}/mark-as-read-ajax', [\App\Http\Controllers\NotificationController::class, 'markAsReadAjax'])
+        ->name('notifications.mark-as-read-ajax');
+        
+    Route::post('/notifications/mark-all-read-ajax', [\App\Http\Controllers\NotificationController::class, 'markAllAsReadAjax'])
+        ->name('notifications.mark-all-read-ajax');
+        
+    // View all notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])
+        ->name('notifications.index');
+        
+    // Delete notifications
+    Route::delete('/notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
+        
+    Route::delete('/notifications', [\App\Http\Controllers\NotificationController::class, 'destroyAll'])
+        ->name('notifications.destroy-all');
+});

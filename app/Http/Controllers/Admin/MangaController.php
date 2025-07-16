@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Manga;
+use App\Models\User;
+use App\Notifications\MangaNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
 
 class MangaController extends Controller
 {
@@ -74,6 +77,13 @@ class MangaController extends Controller
         if ($request->hasFile('cover')) {
             $path = $request->file('cover')->store('public/manga_covers');
             $validated['cover_url'] = Storage::url($path);
+        } else {
+            $validated['cover_url'] = 'images/default-cover.jpg';
+        }
+        
+        // Set default thumbnail if not provided
+        if (!isset($validated['thumbnail_url'])) {
+            $validated['thumbnail_url'] = $validated['cover_url'];
         }
 
         // Convert arrays to JSON
@@ -90,11 +100,6 @@ class MangaController extends Controller
         // Create slug
         $validated['slug'] = Str::slug($validated['title']);
         
-        // Set default thumbnail if not provided
-        if (!isset($validated['thumbnail_url'])) {
-            $validated['thumbnail_url'] = '/images/default-thumbnail.jpg'; // Make sure this default image exists
-        }
-
         // Remove fields that don't exist in the database yet
         $fieldsToRemove = ['rating', 'rating_count', 'view_count'];
         foreach ($fieldsToRemove as $field) {
@@ -105,6 +110,15 @@ class MangaController extends Controller
 
         // Create manga
         $manga = Manga::create($validated);
+        
+        // Send notification to all admins except the one who created the manga
+        $admins = User::where('is_admin', true)
+            ->where('id', '!=', auth()->id())
+            ->get();
+            
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new MangaNotification($manga, 'created'));
+        }
 
         return redirect()->route('admin.mangas.index')
             ->with('success', 'Mangá criado com sucesso!');
@@ -199,6 +213,15 @@ class MangaController extends Controller
         }
 
         $manga->update($validated);
+
+        // Send update notification to all admins except the one who updated the manga
+        $admins = User::where('is_admin', true)
+            ->where('id', '!=', auth()->id())
+            ->get();
+            
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new MangaNotification($manga, 'updated'));
+        }
 
         return redirect()->route('admin.mangas.index')
             ->with('success', 'Mangá atualizado com sucesso!');
