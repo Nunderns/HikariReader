@@ -129,82 +129,111 @@
                         </div>
                         
                         <div class="flex items-center space-x-4">
-                            <!-- Botão de notificações -->
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative">
+                            <!-- Notification Dropdown -->
+                            <div class="relative ml-3" x-data="{ open: false }" @keydown.escape="open = false" @notifications-updated.window="open = false">
+                                <button 
+                                    @click="open = !open" 
+                                    class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                >
+                                    <span class="sr-only">Ver notificações</span>
                                     <i class="far fa-bell text-xl"></i>
-                                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400"></span>
+                                    @if(auth()->user()->unreadNotifications->count() > 0)
+                                        <span class="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 notification-count">
+                                            {{ auth()->user()->unreadNotifications->count() > 9 ? '9+' : auth()->user()->unreadNotifications->count() }}
+                                        </span>
+                                    @endif
                                 </button>
-                                
-                                <!-- Dropdown de notificações -->
-                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none z-50" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95">
-                                    <div class="px-4 py-3">
+
+                                <!-- Dropdown panel, show/hide based on dropdown state -->
+                                <div 
+                                    x-show="open" 
+                                    @click.away="open = false" 
+                                    class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 divide-y divide-gray-200"
+                                    x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                    style="display: none;"
+                                >
+                                    <div class="px-4 py-3 flex items-center justify-between border-b border-gray-200">
                                         <p class="text-sm font-medium text-gray-900">Notificações</p>
-                                        <p class="mt-1 text-sm text-gray-500">Você tem 3 notificações não lidas</p>
+                                        @if(auth()->user()->unreadNotifications->count() > 0)
+                                            <button 
+                                                @click="markAllNotificationsAsRead(); open = false;" 
+                                                class="text-xs text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                                            >
+                                                Marcar todas como lidas
+                                            </button>
+                                        @endif
                                     </div>
-                                    <div class="py-1">
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0">
-                                                    <i class="fas fa-user-plus text-green-500"></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p class="text-sm font-medium text-gray-900">Novo usuário registrado</p>
-                                                    <p class="text-xs text-gray-500">Há 5 minutos</p>
-                                                </div>
+                                    
+                                    <div class="max-h-96 overflow-y-auto notifications-list">
+                                        @forelse(auth()->user()->unreadNotifications->take(10) as $notification)
+                                            <a 
+                                                href="{{ $notification->data['url'] ?? '#' }}" 
+                                                class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 bg-blue-50"
+                                                data-notification-id="{{ $notification->id }}"
+                                                @click="markNotificationAsRead('{{ $notification->id }}'); open = false;"
+                                            >
+                                                <x-notification-item :notification="$notification" />
+                                            </a>
+                                        @empty
+                                            <div class="px-4 py-6 text-center text-sm text-gray-500">
+                                                <i class="far fa-bell-slash text-2xl text-gray-300 mb-2"></i>
+                                                <p>Nenhuma notificação nova</p>
                                             </div>
-                                        </a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0">
-                                                    <i class="fas fa-book text-blue-500"></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p class="text-sm font-medium text-gray-900">Novo mangá adicionado</p>
-                                                    <p class="text-xs text-gray-500">Há 1 hora</p>
-                                                </div>
+                                        @endforelse
+                                        
+                                        @if(auth()->user()->readNotifications->count() > 0 && auth()->user()->unreadNotifications->count() < 10)
+                                            <div class="px-4 py-2 text-xs font-medium text-gray-500 border-t border-gray-100 bg-gray-50">
+                                                Notificações anteriores
                                             </div>
-                                        </a>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0">
-                                                    <i class="fas fa-comment text-yellow-500"></i>
-                                                </div>
-                                                <div class="ml-3">
-                                                    <p class="text-sm font-medium text-gray-900">Novo comentário</p>
-                                                    <p class="text-xs text-gray-500">Há 3 horas</p>
-                                                </div>
-                                            </div>
-                                        </a>
+                                            @foreach(auth()->user()->readNotifications->take(10 - auth()->user()->unreadNotifications->count()) as $notification)
+                                                <a 
+                                                    href="{{ $notification->data['url'] ?? '#' }}" 
+                                                    class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100"
+                                                    data-notification-id="{{ $notification->id }}"
+                                                    @click="open = false"
+                                                >
+                                                    <x-notification-item :notification="$notification" />
+                                                </a>
+                                            @endforeach
+                                        @endif
                                     </div>
-                                    <div class="px-4 py-2">
-                                        <a href="#" class="block text-center text-sm font-medium text-indigo-600 hover:text-indigo-900">
+                                    
+                                    <div class="px-4 py-2 bg-gray-50 text-center border-t border-gray-200">
+                                        <a 
+                                            href="{{ route('admin.notifications.index') }}" 
+                                            class="text-sm font-medium text-indigo-600 hover:text-indigo-900 inline-flex items-center"
+                                            @click="open = false"
+                                        >
                                             Ver todas as notificações
+                                            <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
                                         </a>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Menu do usuário -->
+                            
+                            <!-- User Dropdown -->
                             <div class="relative ml-3" x-data="{ open: false }">
-                                <div>
-                                    <button @click="open = !open" type="button" class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="user-menu" aria-expanded="false" aria-haspopup="true">
-                                        <span class="sr-only">Abrir menu do usuário</span>
-                                        <img class="h-8 w-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random" alt="{{ auth()->user()->name }}">
-                                        <span class="ml-2 text-sm font-medium text-gray-700 hidden md:inline-block">{{ auth()->user()->name }}</span>
-                                        <i class="fas fa-chevron-down ml-1 text-gray-400 text-xs"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Menu suspenso do usuário -->
-                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                                <button @click="open = !open" class="flex items-center max-w-xs text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="user-menu" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Abrir menu do usuário</span>
+                                    <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random" alt="{{ auth()->user()->name }}">
+                                </button>
+                                
+                                <div x-show="open" @click.away="open = false" class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu" style="display: none;">
                                     <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                                        <i class="far fa-user mr-2"></i> Meu Perfil
+                                        <i class="fas fa-user mr-2"></i> Perfil
                                     </a>
                                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                                         <i class="fas fa-cog mr-2"></i> Configurações
                                     </a>
-                                    <div class="border-t border-gray-100 my-1"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
@@ -320,6 +349,27 @@
     </div>
 
     @stack('scripts')
+    
+    <!-- Notification Scripts -->
+    @auth
+        <script>
+            window.Laravel = {!! json_encode([
+                'user' => [
+                    'id' => auth()->id(),
+                    'name' => auth()->user()->name,
+                    'is_admin' => auth()->user()->is_admin,
+                ],
+                'pusher' => [
+                    'key' => config('broadcasting.connections.pusher.key'),
+                    'cluster' => config('broadcasting.connections.pusher.options.cluster'),
+                ],
+            ]) !!};
+        </script>
+        @vite(['resources/js/admin/notifications.js'])
+    @endauth
+    
+    <!-- Notification Sound -->
+    <script src="{{ asset('js/notification-sound.js') }}"></script>
     
     <!-- Admin JS -->
     @vite('resources/js/admin.js')

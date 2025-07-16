@@ -19,6 +19,8 @@
         "@alpinejs/persist": "^3.14.9",
         "@sweetalert2/theme-dark": "^5.0.27",
         "alpinejs": "^3.14.9",
+        "laravel-echo": "^2.1.6",
+        "pusher-js": "^8.4.0",
         "sweetalert2": "^11.22.2"
     }
 }
