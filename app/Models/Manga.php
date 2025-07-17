@@ -10,16 +10,51 @@ class Manga extends Model
 {
     protected $fillable = [
         'title',
+        'english_title',
         'description',
+        'cover_url',
         'thumbnail_url',
         'author',
+        'artist',
+        'status',
+        'published_date',
+        'rating',
+        'rating_count',
+        'view_count',
+        'is_adult',
+        'is_suggestive',
         'featured',
-        'status'
+        'alt_titles',
+        'genres',
+        'themes',
+        'demographic',
+        'serialization'
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'thumbnail_url' => '/images/default-thumbnail.jpg',
+        'cover_url' => '/images/default-cover.jpg',
+        'is_adult' => false,
+        'is_suggestive' => false,
+        'featured' => false
     ];
 
     protected $casts = [
         'featured' => 'boolean',
-        'status' => 'string'
+        'is_adult' => 'boolean',
+        'is_suggestive' => 'boolean',
+        'published_date' => 'date',
+        'rating' => 'float',
+        'rating_count' => 'integer',
+        'view_count' => 'integer',
+        'alt_titles' => 'array',
+        'genres' => 'array',
+        'themes' => 'array'
     ];
 
     public function chapters()

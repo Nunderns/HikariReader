@@ -48,6 +48,23 @@ Route::get('/updates', [App\Http\Controllers\UpdatesController::class, 'index'])
 // Library Route
 Route::get('/library', [App\Http\Controllers\LibraryController::class, 'index'])->name('library.index');
 
+// Manga Routes
+Route::get('/manga/{id}', [App\Http\Controllers\MangaController::class, 'show'])->name('manga.show');
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Dashboard
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    });
+    
+    Route::get('/dashboard', 'App\Http\Controllers\Admin\DashboardController@index')->name('dashboard');
+    
+    // Manga Routes
+    Route::resource('mangas', 'App\Http\Controllers\Admin\MangaController')->except(['show']);
+    Route::get('mangas/{manga}/confirm-delete', 'App\Http\Controllers\Admin\MangaController@confirmDelete')->name('mangas.confirm-delete');
+});
+
 // Other routes
 Route::get('/bookmarks', 'App\Http\Controllers\BookmarksController@index')->name('bookmarks');
 Route::get('/groups', 'App\Http\Controllers\GroupsController@index')->name('groups.index');
@@ -79,3 +96,35 @@ Route::get('/latest-updates', 'App\Http\Controllers\HomeController@latestUpdates
 
 // Advanced Search Route
 Route::get('/advanced-search', 'App\Http\Controllers\HomeController@advancedSearch')->name('advanced.search');
+
+// Admin Routes
+require __DIR__.'/admin.php';
+
+// Notification routes
+Route::middleware(['auth'])->group(function () {
+    // Mark single notification as read
+    Route::post('/notifications/{notification}/mark-as-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])
+        ->name('notifications.mark-as-read');
+        
+    // Mark all notifications as read
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.mark-all-read');
+        
+    // AJAX endpoints
+    Route::post('/notifications/{notification}/mark-as-read-ajax', [\App\Http\Controllers\NotificationController::class, 'markAsReadAjax'])
+        ->name('notifications.mark-as-read-ajax');
+        
+    Route::post('/notifications/mark-all-read-ajax', [\App\Http\Controllers\NotificationController::class, 'markAllAsReadAjax'])
+        ->name('notifications.mark-all-read-ajax');
+        
+    // View all notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])
+        ->name('notifications.index');
+        
+    // Delete notifications
+    Route::delete('/notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy'])
+        ->name('notifications.destroy');
+        
+    Route::delete('/notifications', [\App\Http\Controllers\NotificationController::class, 'destroyAll'])
+        ->name('notifications.destroy-all');
+});
