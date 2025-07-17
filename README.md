@@ -99,3 +99,5 @@ Make sure your code follows the project's style standards and that all tests pas
 This project is licensed under the MIT License. See the `LICENSE` file for more details.
 
 ---
+
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Nunderns/HikariReader?utm_source=oss&utm_medium=github&utm_campaign=Nunderns%2FHikariReader&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
