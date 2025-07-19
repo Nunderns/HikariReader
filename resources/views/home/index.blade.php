@@ -7,18 +7,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Featured Manga Cards -->
             @forelse($featuredMangas as $manga)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <a href="{{ route('manga.show', $manga->id) }}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <img src="{{ $manga->thumbnail_url }}" alt="{{ $manga->title }}" class="w-full h-64 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold mb-2">{{ $manga->title }}</h3>
-                        <p class="text-gray-600 text-sm mb-2">{{ $manga->description }}</p>
+                        <p class="text-gray-600 text-sm mb-2 line-clamp-2">{{ $manga->description }}</p>
                         <div class="flex items-center space-x-2 text-sm text-gray-500">
                             <span>{{ $manga->chapters_count }} Capítulos</span>
                             <span>•</span>
                             <span>{{ $manga->views_count }} Visualizações</span>
                         </div>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="col-span-full text-center py-8">
                     <p class="text-gray-600">Nenhum mangá em destaque no momento</p>
@@ -33,7 +33,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Popular Manga Cards -->
             @forelse($popularMangas as $manga)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <a href="{{ route('manga.show', $manga->id) }}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <img src="{{ $manga->thumbnail_url }}" alt="{{ $manga->title }}" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold mb-2">{{ $manga->title }}</h3>
@@ -43,7 +43,7 @@
                             <span>{{ $manga->views_count }} Visualizações</span>
                         </div>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="col-span-full text-center py-8">
                     <p class="text-gray-600">Nenhum mangá popular no momento</p>
@@ -81,7 +81,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Recent Manga Cards -->
             @forelse($recentMangas as $manga)
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <a href="{{ route('manga.show', $manga->id) }}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <img src="{{ $manga->thumbnail_url }}" alt="{{ $manga->title }}" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold mb-2">{{ $manga->title }}</h3>
@@ -89,7 +89,7 @@
                             <span>{{ $manga->created_at->diffForHumans() }}</span>
                         </div>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="col-span-full text-center py-8">
                     <p class="text-gray-600">Nenhum mangá recente no momento</p>
