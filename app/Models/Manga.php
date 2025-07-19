@@ -48,6 +48,8 @@ class Manga extends Model
         'featured' => 'boolean',
         'is_adult' => 'boolean',
         'is_suggestive' => 'boolean',
+        'genres' => 'array',
+        'themes' => 'array',
         'published_date' => 'date',
         'rating' => 'float',
         'rating_count' => 'integer',
