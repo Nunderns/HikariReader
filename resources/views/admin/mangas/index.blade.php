@@ -7,13 +7,62 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <div class="flex justify-between items-center">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Lista de Mangás
-            </h3>
-            <a href="{{ route('admin.mangas.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <i class="fas fa-plus mr-2"></i> Adicionar Mangá
-            </a>
+        <div class="flex flex-col space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    Lista de Mangás
+                </h3>
+                <a href="{{ route('admin.mangas.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <i class="fas fa-plus mr-2"></i> Adicionar Mangá
+                </a>
+            </div>
+            
+            <!-- Search and Filter Form -->
+            <form method="GET" action="{{ route('admin.mangas.index') }}" class="space-y-4 sm:space-y-0 sm:flex sm:space-x-4">
+                <!-- Search Input -->
+                <div class="flex-1">
+                    <label for="search" class="sr-only">Pesquisar</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" name="search" id="search" value="{{ request('search') }}" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md" placeholder="Pesquisar por título, autor...">
+                    </div>
+                </div>
+                
+                <!-- Status Filter -->
+                <div class="w-full sm:w-48">
+                    <label for="status" class="sr-only">Status</label>
+                    <select id="status" name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        @foreach($statuses as $value => $label)
+                            <option value="{{ $value }}" {{ request('status', 'all') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <!-- Genre Filter -->
+                <div class="w-full sm:w-48">
+                    <label for="genre" class="sr-only">Gênero</label>
+                    <select id="genre" name="genre" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="all">Todos os Gêneros</option>
+                        @foreach($allGenres as $genre)
+                            <option value="{{ $genre }}" {{ request('genre') == $genre ? 'selected' : '' }}>{{ $genre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i class="fas fa-filter mr-2"></i> Filtrar
+                    </button>
+                    @if(request()->hasAny(['search', 'status', 'genre']) && request('status') !== 'all' || request('genre') !== 'all')
+                        <a href="{{ route('admin.mangas.index') }}" class="ml-2 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Limpar
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
     </div>
     

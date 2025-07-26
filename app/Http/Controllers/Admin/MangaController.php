@@ -19,10 +19,49 @@ class MangaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $mangas = Manga::latest()->paginate(15);
-        return view('admin.mangas.index', compact('mangas'));
+        $query = Manga::query();
+        
+        // Apply search
+        if ($request->has('search')) {
+            $query->search($request->search);
+        }
+        
+        // Apply status filter
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->byStatus($request->status);
+        }
+        
+        // Apply genre filter
+        if ($request->has('genre') && $request->genre !== 'all') {
+            $query->byGenre($request->genre);
+        }
+        
+        $mangas = $query->latest()->paginate(15)->withQueryString();
+        
+        // Get unique genres for filter dropdown
+        $allGenres = Manga::select('genres')
+            ->whereNotNull('genres')
+            ->get()
+            ->flatMap(function ($manga) {
+                return json_decode($manga->genres, true) ?? [];
+            })
+            ->unique()
+            ->sort()
+            ->values();
+            
+        // Status options
+        $statuses = [
+            'all' => 'Todos os Status',
+            'ongoing' => 'Em andamento',
+            'completed' => 'Completo',
+            'hiatus' => 'Em hiato',
+            'cancelled' => 'Cancelado',
+            'not_yet_published' => 'Não publicado'
+        ];
+        
+        return view('admin.mangas.index', compact('mangas', 'allGenres', 'statuses'));
     }
 
     /**

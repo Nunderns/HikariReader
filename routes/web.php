@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MangaController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [MangaController::class, 'search'])->name('manga.search');
 Route::get('/sobre', [HomeController::class, 'about'])->name('about');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
@@ -49,6 +51,7 @@ Route::get('/updates', [App\Http\Controllers\UpdatesController::class, 'index'])
 Route::get('/library', [App\Http\Controllers\LibraryController::class, 'index'])->name('library.index');
 
 // Manga Routes
+Route::get('/manga', [App\Http\Controllers\MangaController::class, 'index'])->name('manga.index');
 Route::get('/manga/{id}', [App\Http\Controllers\MangaController::class, 'show'])->name('manga.show');
 
 // Admin Routes

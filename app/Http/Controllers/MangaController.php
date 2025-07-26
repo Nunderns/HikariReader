@@ -10,6 +10,96 @@ use Illuminate\Support\Facades\DB;
 class MangaController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $recentMangas = Manga::withCount('chapters')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        $popularMangas = Manga::withCount('chapters')
+            ->orderBy('views', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('home', [
+            'recentMangas' => $recentMangas,
+            'popularMangas' => $popularMangas,
+        ]);
+    }
+
+    /**
+     * Display search results.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = Manga::query()
+            ->withCount(['chapters', 'views'])
+            ->search($request->q)
+            ->byStatus($request->status)
+            ->byGenre($request->genre)
+            ->orderBySort($request->input('sort', 'latest'));
+
+        $mangas = $query->paginate(24);
+
+        // Get all available genres for the filter dropdown
+        $allGenres = Manga::select('genres')
+            ->whereNotNull('genres')
+            ->get()
+            ->flatMap(function ($manga) {
+                return $manga->genres ?? [];
+            })
+            ->unique()
+            ->sort()
+            ->values();
+
+        // Status options
+        $statuses = [
+            'all' => 'Todos',
+            'ongoing' => 'Em Andamento',
+            'completed' => 'Completo',
+            'hiatus' => 'Em Hiato',
+            'cancelled' => 'Cancelado'
+        ];
+
+        // Sort options
+        $sortOptions = [
+            'latest' => 'Mais Recentes',
+            'oldest' => 'Mais Antigos',
+            'title-asc' => 'Título (A-Z)',
+            'title-desc' => 'Título (Z-A)',
+            'views-desc' => 'Mais Visualizados',
+            'rating-desc' => 'Melhor Avaliados',
+            'chapters-desc' => 'Mais Capítulos',
+        ];
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('partials.manga-grid', [
+                    'mangas' => $mangas,
+                    'allGenres' => $allGenres,
+                    'statuses' => $statuses,
+                    'sortOptions' => $sortOptions,
+                ])->render(),
+            ]);
+        }
+
+        return view('manga.search', [
+            'mangas' => $mangas,
+            'allGenres' => $allGenres,
+            'statuses' => $statuses,
+            'sortOptions' => $sortOptions,
+        ]);
+    }
+
+    /**
      * Display the specified manga.
      *
      * @param  int  $id
