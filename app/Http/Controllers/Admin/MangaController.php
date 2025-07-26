@@ -42,16 +42,8 @@ class MangaController extends Controller
         
         $mangas = $query->latest()->paginate(15)->withQueryString();
         
-        // Get unique genres for filter dropdown
-        $allGenres = Manga::select('genres')
-            ->whereNotNull('genres')
-            ->get()
-            ->flatMap(function ($manga) {
-                return json_decode($manga->genres, true) ?? [];
-            })
-            ->unique()
-            ->sort()
-            ->values();
+        // Get genres from the genres table
+        $allGenres = \App\Models\Genre::orderBy('name')->pluck('name');
             
         // Status options
         $statuses = [

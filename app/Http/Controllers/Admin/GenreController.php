@@ -122,6 +122,13 @@ class GenreController extends Controller
         
         $genre->delete();
 
+        DB::transaction(function () use ($genre) {
+            // Detach all relationships with mangas before deleting
+            $genre->mangas()->detach();
+            
+            $genre->delete();
+        });
+
         return redirect()->route('admin.genres.index')
             ->with('success', 'Gênero excluído com sucesso!');
     }

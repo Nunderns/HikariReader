@@ -7,6 +7,7 @@ use App\Models\Manga;
 use App\Models\Chapter;
 use App\Models\Author;
 use App\Models\Tag;
+use App\Services\MangaService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -51,15 +52,7 @@ class HomeController extends Controller
             ->get();
 
         // Get unique genres for the search filter
-        $allGenres = Manga::select('genres')
-            ->whereNotNull('genres')
-            ->get()
-            ->flatMap(function ($manga) {
-                return json_decode($manga->genres, true) ?? [];
-            })
-            ->unique()
-            ->sort()
-            ->values();
+        $allGenres = MangaService::getAllGenres();
 
         // Status options
         $statuses = [
