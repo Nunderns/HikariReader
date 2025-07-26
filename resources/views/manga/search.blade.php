@@ -194,14 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const url = new URL(this.href);
-                const params = new URLSearchParams(url.search);
-                // Update form values from URL params
-                searchInput.value = params.get('q') || '';
-                statusSelect.value = params.get('status') || 'all';
-                genreSelect.value = params.get('genre') || '';
-                sortSelect.value = params.get('sort') || 'latest';
-                // Trigger search
-                handleSearch();
+                window.location.href = url.toString();
             });
         });
     }

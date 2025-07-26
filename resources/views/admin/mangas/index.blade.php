@@ -56,7 +56,7 @@
                     <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <i class="fas fa-filter mr-2"></i> Filtrar
                     </button>
-                    @if(request('search') || (request('status') && request('status') !== 'all') || (request('genre') && request('genre') !== 'all'))
+                    @if(request()->hasAny(['search', 'status', 'genre']) && request('status') !== 'all' || request('genre') !== 'all')
                         <a href="{{ route('admin.mangas.index') }}" class="ml-2 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Limpar
                         </a>
