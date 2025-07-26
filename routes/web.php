@@ -17,7 +17,6 @@ Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->nam
 Route::middleware('guest')->group(function () {
     Route::get('login', 'App\Http\Controllers\Auth\LoginController@showLoginForm')->name('login');
     Route::post('login', 'App\Http\Controllers\Auth\LoginController@login');
-    Route::post('logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
     
     // Registration Routes...
     Route::get('register', 'App\Http\Controllers\Auth\RegisterController@showRegistrationForm')->name('register');
@@ -32,6 +31,7 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+    Route::post('logout', 'App\\Http\\Controllers\\Auth\\LoginController@logout')->name('logout');
     // User Management
     Route::get('users', 'App\Http\Controllers\UserController@index')->name('users.index');
     Route::get('users/{user}', 'App\Http\Controllers\UserController@show')->name('users.show');
