@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class GenreSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seeds the database with a predefined list of genres, ensuring each genre is created only once based on its slug.
      */
     public function run(): void
     {

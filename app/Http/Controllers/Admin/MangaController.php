@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Notification;
 class MangaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Retrieves a paginated list of mangas with optional filtering by search term, status, and genre.
+     *
+     * Passes the filtered mangas, available genres, and status options to the admin manga index view.
      *
      * @return \Illuminate\Http\Response
      */

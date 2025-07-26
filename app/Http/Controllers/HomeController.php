@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    /**
+     * Handles the home page request, displaying featured, popular, and recent manga content.
+     *
+     * Redirects to the manga index page with search parameters if any are present in the request. Otherwise, prepares and returns the home page view with featured mangas, popular mangas, recent chapters, recently added mangas, unique genres for filtering, status and sort options, and an empty manga collection for search results.
+     *
+     * @param Request $request The incoming HTTP request.
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         // If there are any search parameters, redirect to the manga index with the parameters

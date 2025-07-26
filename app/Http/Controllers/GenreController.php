@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class GenreController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Displays a list of all genres.
      */
     public function index()
     {
@@ -16,7 +16,7 @@ class GenreController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Displays the form for creating a new genre resource.
      */
     public function create()
     {
@@ -24,7 +24,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Handles storing a newly created Genre resource using data from the HTTP request.
+     *
+     * @param Request $request The HTTP request containing data for the new Genre.
      */
     public function store(Request $request)
     {
@@ -32,7 +34,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Displays the specified Genre resource.
+     *
+     * @param Genre $genre The Genre instance to display.
      */
     public function show(Genre $genre)
     {
@@ -40,7 +44,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Displays a form for editing the specified genre.
+     *
+     * @param Genre $genre The genre to edit.
      */
     public function edit(Genre $genre)
     {
@@ -48,7 +54,10 @@ class GenreController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Updates the specified Genre resource with data from the request.
+     *
+     * @param Request $request The HTTP request containing updated data.
+     * @param Genre $genre The Genre instance to update.
      */
     public function update(Request $request, Genre $genre)
     {
@@ -56,7 +65,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deletes the specified Genre resource from storage.
+     *
+     * @param Genre $genre The Genre instance to be deleted.
      */
     public function destroy(Genre $genre)
     {

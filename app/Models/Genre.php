@@ -18,8 +18,10 @@ class Genre extends Model
         'description',
     ];
 
-    /**
-     * Get the mangas that belong to this genre.
+    /****
+     * Defines a many-to-many relationship between the genre and mangas.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany The mangas associated with this genre.
      */
     public function mangas(): BelongsToMany
     {

@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 class MangaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Displays the home page with the 10 most recent and 10 most popular mangas.
+     *
+     * Retrieves the latest and most viewed mangas, each with their chapter count, and passes them to the 'home' view.
      *
      * @return \Illuminate\Http\Response
      */
@@ -33,10 +35,12 @@ class MangaController extends Controller
     }
 
     /**
-     * Display search results.
+     * Handles manga search requests, applying filters and sorting, and returns paginated results.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Supports filtering by search term, status, genre, and sort order. Returns either a rendered view or a JSON response with HTML partials for AJAX requests.
+     *
+     * @param \Illuminate\Http\Request $request The incoming HTTP request containing search parameters.
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
     {
@@ -100,10 +104,10 @@ class MangaController extends Controller
     }
 
     /**
-     * Display the specified manga.
+     * Displays detailed information for a specific manga, including chapters, ratings, genres, recommendations, and related data.
      *
-     * @param  int  $id
-     * @return \Illuminate\View\View
+     * @param int $id The ID of the manga to display.
+     * @return \Illuminate\View\View The view displaying the manga details.
      */
     public function show($id)
     {
@@ -242,10 +246,12 @@ class MangaController extends Controller
     }
     
     /**
-     * Format chapters data for the view
+     * Formats a collection or array of chapter data for display in views.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $chapters
-     * @return array
+     * Converts chapter objects or arrays into a standardized array structure with keys for id, number, title, volume, pages, human-readable date, and URL. Chapters are sorted in descending order by number.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection|array|null $chapters The chapters to format.
+     * @return array The formatted chapters array.
      */
     protected function formatChapters($chapters)
     {
@@ -290,11 +296,13 @@ class MangaController extends Controller
     }
     
     /**
-     * Get recommended manga based on genres and themes
+     * Retrieves a collection of recommended mangas based on shared genres and themes with the given manga.
      *
-     * @param Manga $currentManga
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * If the current manga has no genres or themes, returns the most viewed mangas excluding the current one.
+     *
+     * @param Manga $currentManga The manga for which recommendations are generated.
+     * @param int $limit The maximum number of recommended mangas to return.
+     * @return \Illuminate\Database\Eloquent\Collection A collection of recommended mangas.
      */
     protected function getRecommendedManga($currentManga, $limit = 6)
     {
@@ -375,7 +383,7 @@ class MangaController extends Controller
     }
     
     /**
-     * Generate sample reviews for the manga
+     * Returns an empty array, indicating no sample reviews are provided.
      *
      * @return array
      */
