@@ -18,7 +18,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100">
     <!-- Sidebar -->
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900">
         <!-- Sidebar -->
@@ -146,7 +146,7 @@
         <!-- Main Content -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <!-- Top Navigation -->
-            <header class="bg-white shadow-sm z-10">
+            <header class="bg-white shadow-sm z-10 text-gray-800">
                 <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <!-- Botão do menu móvel -->
                     <button @click="sidebarOpen = !sidebarOpen" class="md:hidden text-gray-500 hover:text-gray-600 focus:outline-none">
@@ -198,7 +198,7 @@
                                     style="display: none;"
                                 >
                                     <div class="px-4 py-3 flex items-center justify-between border-b border-gray-200">
-                                        <p class="text-sm font-medium text-gray-900">Notificações</p>
+                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Notificações</p>
                                         @if(auth()->user()->unreadNotifications->count() > 0)
                                             <button 
                                                 @click="markAllNotificationsAsRead(); open = false;" 
