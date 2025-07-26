@@ -91,11 +91,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Recent Manga Cards -->
             @forelse($recentMangas as $manga)
-                <a href="{{ route('manga.show', $manga->id) }}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <a href="{{ route('manga.show', $manga->id) }}" class="block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <img src="{{ $manga->thumbnail_url }}" alt="{{ $manga->title }}" class="w-full h-48 object-cover">
                     <div class="p-4">
-                        <h3 class="text-xl font-semibold mb-2">{{ $manga->title }}</h3>
-                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{{ $manga->title }}</h3>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                             <span>{{ $manga->created_at->diffForHumans() }}</span>
                         </div>
                     </div>

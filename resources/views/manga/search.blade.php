@@ -194,7 +194,14 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const url = new URL(this.href);
-                window.location.href = url.toString();
+                const params = new URLSearchParams(url.search);
+                // Update form values from URL params
+                searchInput.value = params.get('q') || '';
+                statusSelect.value = params.get('status') || 'all';
+                genreSelect.value = params.get('genre') || '';
+                sortSelect.value = params.get('sort') || 'latest';
+                // Trigger search
+                handleSearch();
             });
         });
     }

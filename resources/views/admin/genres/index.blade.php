@@ -3,7 +3,7 @@
 @section('title', 'Gerenciar Gêneros')
 
 @section('header')
-<h1 class="text-lg text-black-500">Gerenciar Gêneros</h1>
+<h1 class="text-lg text-gray-900 dark:text-white">Gerenciar Gêneros</h1>
 @endsection
 
 @section('content')
