@@ -66,6 +66,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Manga Routes
     Route::resource('mangas', 'App\Http\Controllers\Admin\MangaController')->except(['show']);
     Route::get('mangas/{manga}/confirm-delete', 'App\Http\Controllers\Admin\MangaController@confirmDelete')->name('mangas.confirm-delete');
+    
+    // Genre Routes
+    Route::get('genres', 'App\Http\Controllers\Admin\GenreController@index')->name('genres.index');
+    Route::get('genres/create', 'App\Http\Controllers\Admin\GenreController@create')->name('genres.create');
+    Route::post('genres', 'App\Http\Controllers\Admin\GenreController@store')->name('genres.store');
+    Route::get('genres/{genre}/edit', 'App\Http\Controllers\Admin\GenreController@edit')->name('genres.edit');
+    Route::put('genres/{genre}', 'App\Http\Controllers\Admin\GenreController@update')->name('genres.update');
+    Route::delete('genres/{genre}', 'App\Http\Controllers\Admin\GenreController@destroy')->name('genres.destroy');
+    Route::get('genres/{genre}/confirm-delete', 'App\Http\Controllers\Admin\GenreController@confirmDelete')->name('genres.confirm-delete');
 });
 
 // Other routes

@@ -23,9 +23,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Run the admin seeder
+        // Run the seeders
         $this->call([
             AdminUserSeeder::class,
+            GenreSeeder::class,
         ]);
     }
 }
