@@ -56,9 +56,22 @@
                                 <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-blue-500 dark:bg-blue-600 text-white">{{ \App\Models\Chapter::count() }}</span>
                             </a>
                             
-                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                            <a href="{{ route('admin.genres.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.genres.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
                                 <i class="fas fa-tags mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Gêneros
+                                @php
+                                    $genresCount = \App\Models\Manga::whereNotNull('genres')
+                                        ->selectRaw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')))) as count')
+                                        ->join(
+                                            DB::raw('(SELECT 0 as gen UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) numbers'),
+                                            function($join) {
+                                                $join->on(DB::raw('JSON_LENGTH(genres)'), '>', 'numbers.gen')
+                                                    ->whereRaw('JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')) IS NOT NULL');
+                                            }
+                                        )
+                                        ->first()->count ?? 0;
+                                @endphp
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-yellow-500 dark:bg-yellow-600 text-white">{{ $genresCount }}</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">

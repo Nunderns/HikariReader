@@ -30,6 +30,14 @@ class Manga extends Model
         'demographic',
         'serialization'
     ];
+    
+    /**
+     * The genres that belong to the manga.
+     */
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(Genre::class);
+    }
 
     /**
      * The model's default values for attributes.
