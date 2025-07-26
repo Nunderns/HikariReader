@@ -7,11 +7,17 @@ use App\Models\Manga;
 use App\Models\Chapter;
 use App\Models\Author;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // If there are any search parameters, redirect to the manga index with the parameters
+        if ($request->hasAny(['search', 'status', 'genre', 'sort'])) {
+            return redirect()->route('manga.index', $request->all());
+        }
+
         // Get featured mangas (top 5 by views in the last week)
         $featuredMangas = Manga::where('featured', true)
             ->withCount(['chapters', 'views'])
@@ -36,11 +42,45 @@ class HomeController extends Controller
             ->take(10)
             ->get();
 
+        // Get unique genres for the search filter
+        $allGenres = Manga::select('genres')
+            ->whereNotNull('genres')
+            ->get()
+            ->flatMap(function ($manga) {
+                return json_decode($manga->genres, true) ?? [];
+            })
+            ->unique()
+            ->sort()
+            ->values();
+
+        // Status options
+        $statuses = [
+            'all' => 'Todos os Status',
+            'ongoing' => 'Em andamento',
+            'completed' => 'Completo',
+            'hiatus' => 'Em hiato',
+            'cancelled' => 'Cancelado',
+            'not_yet_published' => 'Não publicado'
+        ];
+
+        // Sort options
+        $sortOptions = [
+            'latest' => 'Mais Recentes',
+            'title' => 'Título (A-Z)',
+            'rating' => 'Melhor Avaliados',
+            'views' => 'Mais Visualizados'
+        ];
+
         return view('home.index', [
             'featuredMangas' => $featuredMangas,
             'popularMangas' => $popularMangas,
             'recentChapters' => $recentChapters,
-            'recentMangas' => $recentMangas
+            'recentMangas' => $recentMangas,
+            'allGenres' => $allGenres,
+            'statuses' => $statuses,
+            'sortOptions' => $sortOptions,
+            'sortBy' => 'latest',
+            'mangas' => collect([]) // Empty collection for the search results section
         ]);
     }
 

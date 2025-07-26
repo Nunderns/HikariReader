@@ -18,46 +18,97 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
     <!-- Sidebar -->
-    <div class="flex h-screen bg-gray-50">
+    <div class="flex h-screen bg-gray-50 dark:bg-gray-900">
         <!-- Sidebar -->
         <div class="hidden md:flex md:flex-shrink-0">
-            <div class="flex flex-col w-64 bg-indigo-700 text-white">
-                <div class="flex items-center justify-center h-16 px-4 bg-indigo-800">
-                    <span class="text-xl font-bold">HikariReader</span>
+            <div class="flex flex-col w-64 bg-indigo-700 dark:bg-gray-800 text-white dark:text-gray-200">
+                <div class="flex items-center justify-center h-16 px-4 bg-indigo-800 dark:bg-gray-900">
+                    <span class="text-xl font-bold text-white">HikariReader</span>
                 </div>
-                <nav class="flex-1 px-2 py-4 space-y-1">
+                <nav class="mt-8 flex-1 px-2 space-y-1">
                     <!-- Dashboard -->
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-md {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-600' }}">
-                        <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i>
-                        Dashboard
-                    </a>
-                    
-                    <!-- Mangás -->
-                    <a href="{{ route('admin.mangas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-md {{ request()->routeIs('admin.mangas.*') ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-600' }}">
-                        <i class="fas fa-book mr-3 w-5 text-center"></i>
-                        Mangás
-                    </a>
-                    
-                    <!-- Capítulos -->
-                    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-md text-indigo-100 hover:bg-indigo-600">
-                        <i class="fas fa-list-ol mr-3 w-5 text-center"></i>
-                        Capítulos
-                    </a>
-                    
-                    <!-- Usuários -->
-                    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-md text-indigo-100 hover:bg-indigo-600">
-                        <i class="fas fa-users mr-3 w-5 text-center"></i>
-                        Usuários
-                    </a>
-                    
-                    <!-- Comentários -->
-                    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-md text-indigo-100 hover:bg-indigo-600">
-                        <i class="fas fa-comments mr-3 w-5 text-center"></i>
-                        Comentários
-                        <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">3</span>
-                    </a>
+                    <div class="mb-4">
+                        <h3 class="px-4 text-xs font-semibold text-indigo-200 dark:text-indigo-300 uppercase tracking-wider">Principal</h3>
+                        <div class="mt-2 space-y-1">
+                            <a href="{{ route('admin.dashboard') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
+                                <i class="fas fa-tachometer-alt mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Dashboard
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-indigo-600 text-indigo-100">New</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo -->
+                    <div class="mb-4">
+                        <h3 class="px-4 text-xs font-semibold text-indigo-200 dark:text-indigo-300 uppercase tracking-wider">Conteúdo</h3>
+                        <div class="mt-2 space-y-1">
+                            <a href="{{ route('admin.mangas.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.mangas.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
+                                <i class="fas fa-book mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Mangás
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-green-500 text-white">{{ \App\Models\Manga::count() }}</span>
+                            </a>
+                            
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-list-ol mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Capítulos
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-blue-500 dark:bg-blue-600 text-white">{{ \App\Models\Chapter::count() }}</span>
+                            </a>
+                            
+                            <a href="{{ route('admin.genres.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.genres.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
+                                <i class="fas fa-tags mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Gêneros
+                                @php
+                                    $genresCount = \App\Models\Manga::whereNotNull('genres')
+                                        ->selectRaw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')))) as count')
+                                        ->join(
+                                            DB::raw('(SELECT 0 as gen UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) numbers'),
+                                            function($join) {
+                                                $join->on(DB::raw('JSON_LENGTH(genres)'), '>', 'numbers.gen')
+                                                    ->whereRaw('JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')) IS NOT NULL');
+                                            }
+                                        )
+                                        ->first()->count ?? 0;
+                                @endphp
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-yellow-500 dark:bg-yellow-600 text-white">{{ $genresCount }}</span>
+                            </a>
+                            
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-paint-brush mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Artistas
+                            </a>
+                            
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-user-edit mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Autores
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Comunidade -->
+                    <div class="mb-4">
+                        <h3 class="px-4 text-xs font-semibold text-indigo-200 dark:text-indigo-300 uppercase tracking-wider">Comunidade</h3>
+                        <div class="mt-2 space-y-1">
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-users mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Usuários
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-purple-500 dark:bg-purple-600 text-white">{{ \App\Models\User::count() }}</span>
+                            </a>
+                            
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-comments mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Comentários
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-red-500 dark:bg-red-600 text-white">3</span>
+                            </a>
+                            
+                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
+                                <i class="fas fa-flag mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Denúncias
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-yellow-500 dark:bg-yellow-600 text-white">5</span>
+                            </a>
+                        </div>
+                    </div>
                     
                     <!-- Configurações -->
                     <div x-data="{ open: {{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }} }">
@@ -85,9 +136,7 @@
                 </nav>
                 <div class="p-4 border-t border-indigo-800">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <img class="w-10 h-10 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random" alt="{{ auth()->user()->name }}">
-                        </div>
+                        <img class="w-10 h-10 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random" alt="{{ auth()->user()->name }}">
                         <div class="ml-3">
                             <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
                             <a href="{{ route('profile.show') }}" class="text-xs font-medium text-indigo-200 hover:text-white">Ver perfil</a>

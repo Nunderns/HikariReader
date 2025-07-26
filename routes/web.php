@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MangaController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/search', [MangaController::class, 'search'])->name('manga.search');
 Route::get('/sobre', [HomeController::class, 'about'])->name('about');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
@@ -15,7 +17,6 @@ Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->nam
 Route::middleware('guest')->group(function () {
     Route::get('login', 'App\Http\Controllers\Auth\LoginController@showLoginForm')->name('login');
     Route::post('login', 'App\Http\Controllers\Auth\LoginController@login');
-    Route::post('logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
     
     // Registration Routes...
     Route::get('register', 'App\Http\Controllers\Auth\RegisterController@showRegistrationForm')->name('register');
@@ -30,6 +31,7 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+    Route::post('logout', 'App\\Http\\Controllers\\Auth\\LoginController@logout')->name('logout');
     // User Management
     Route::get('users', 'App\Http\Controllers\UserController@index')->name('users.index');
     Route::get('users/{user}', 'App\Http\Controllers\UserController@show')->name('users.show');
@@ -49,6 +51,7 @@ Route::get('/updates', [App\Http\Controllers\UpdatesController::class, 'index'])
 Route::get('/library', [App\Http\Controllers\LibraryController::class, 'index'])->name('library.index');
 
 // Manga Routes
+Route::get('/manga', [App\Http\Controllers\MangaController::class, 'index'])->name('manga.index');
 Route::get('/manga/{id}', [App\Http\Controllers\MangaController::class, 'show'])->name('manga.show');
 
 // Admin Routes
@@ -63,6 +66,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Manga Routes
     Route::resource('mangas', 'App\Http\Controllers\Admin\MangaController')->except(['show']);
     Route::get('mangas/{manga}/confirm-delete', 'App\Http\Controllers\Admin\MangaController@confirmDelete')->name('mangas.confirm-delete');
+    
+    // Genre Routes
+    Route::get('genres', 'App\Http\Controllers\Admin\GenreController@index')->name('genres.index');
+    Route::get('genres/create', 'App\Http\Controllers\Admin\GenreController@create')->name('genres.create');
+    Route::post('genres', 'App\Http\Controllers\Admin\GenreController@store')->name('genres.store');
+    Route::get('genres/{genre}/edit', 'App\Http\Controllers\Admin\GenreController@edit')->name('genres.edit');
+    Route::put('genres/{genre}', 'App\Http\Controllers\Admin\GenreController@update')->name('genres.update');
+    Route::delete('genres/{genre}', 'App\Http\Controllers\Admin\GenreController@destroy')->name('genres.destroy');
+    Route::get('genres/{genre}/confirm-delete', 'App\Http\Controllers\Admin\GenreController@confirmDelete')->name('genres.confirm-delete');
 });
 
 // Other routes

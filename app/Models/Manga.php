@@ -30,6 +30,14 @@ class Manga extends Model
         'demographic',
         'serialization'
     ];
+    
+    /**
+     * The genres that belong to the manga.
+     */
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(Genre::class);
+    }
 
     /**
      * The model's default values for attributes.
@@ -96,6 +104,83 @@ class Manga extends Model
             ->wherePivot('role', 'artist')
             ->withTimestamps();
     }
+    
+    /**
+     * Scope a query to search mangas by title, author, or artist.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query, $search = null)
+    {
+        if (!$search) {
+            return $query;
+        }
+        
+        return $query->where(function($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+              ->orWhere('english_title', 'like', "%{$search}%")
+              ->orWhere('author', 'like', "%{$search}%")
+              ->orWhere('artist', 'like', "%{$search}%");
+        });
+    }
+    
+    /**
+     * Scope a query to filter mangas by status.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $status
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByStatus($query, $status = null)
+    {
+        if (!$status || $status === 'all') {
+            return $query;
+        }
+        
+        return $query->where('status', $status);
+    }
+    
+    /**
+     * Scope a query to filter mangas by genre.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string|null  $genre
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByGenre($query, $genre = null)
+    {
+        if (!$genre || $genre === 'all') {
+            return $query;
+        }
+        
+        return $query->whereJsonContains('genres', $genre);
+    }
+    
+    /**
+     * Scope a query to order mangas by a given field.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $sortBy
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOrderBySort($query, $sortBy = 'latest')
+    {
+        switch ($sortBy) {
+            case 'title':
+                return $query->orderBy('title', 'asc');
+            case 'rating':
+                return $query->orderBy('rating', 'desc');
+            case 'views':
+                return $query->orderBy('view_count', 'desc');
+            case 'latest':
+            default:
+                return $query->latest();
+        }
+    }
+    
+
     
     /**
      * The tags that belong to the manga.

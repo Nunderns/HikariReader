@@ -10,6 +10,96 @@ use Illuminate\Support\Facades\DB;
 class MangaController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $recentMangas = Manga::withCount('chapters')
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        $popularMangas = Manga::withCount('chapters')
+            ->orderBy('views', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('home', [
+            'recentMangas' => $recentMangas,
+            'popularMangas' => $popularMangas,
+        ]);
+    }
+
+    /**
+     * Display search results.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = Manga::query()
+            ->withCount(['chapters', 'views'])
+            ->search($request->q)
+            ->byStatus($request->status)
+            ->byGenre($request->genre)
+            ->orderBySort($request->input('sort', 'latest'));
+
+        $mangas = $query->paginate(24);
+
+        // Get all available genres for the filter dropdown
+        $allGenres = Manga::select('genres')
+            ->whereNotNull('genres')
+            ->get()
+            ->flatMap(function ($manga) {
+                return $manga->genres ?? [];
+            })
+            ->unique()
+            ->sort()
+            ->values();
+
+        // Status options
+        $statuses = [
+            'all' => 'Todos',
+            'ongoing' => 'Em Andamento',
+            'completed' => 'Completo',
+            'hiatus' => 'Em Hiato',
+            'cancelled' => 'Cancelado'
+        ];
+
+        // Sort options
+        $sortOptions = [
+            'latest' => 'Mais Recentes',
+            'oldest' => 'Mais Antigos',
+            'title-asc' => 'Título (A-Z)',
+            'title-desc' => 'Título (Z-A)',
+            'views-desc' => 'Mais Visualizados',
+            'rating-desc' => 'Melhor Avaliados',
+            'chapters-desc' => 'Mais Capítulos',
+        ];
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('partials.manga-grid', [
+                    'mangas' => $mangas,
+                    'allGenres' => $allGenres,
+                    'statuses' => $statuses,
+                    'sortOptions' => $sortOptions,
+                ])->render(),
+            ]);
+        }
+
+        return view('manga.search', [
+            'mangas' => $mangas,
+            'allGenres' => $allGenres,
+            'statuses' => $statuses,
+            'sortOptions' => $sortOptions,
+        ]);
+    }
+
+    /**
      * Display the specified manga.
      *
      * @param  int  $id
@@ -24,6 +114,13 @@ class MangaController extends Controller
         // Increment view count
         $manga->increment('view_count');
 
+        // Ensure genres and themes are arrays
+        $genres = is_string($manga->genres) ? json_decode($manga->genres, true) : ($manga->genres ?: []);
+        $themes = is_string($manga->themes) ? json_decode($manga->themes, true) : ($manga->themes ?: []);
+        
+        // Get recommended manga
+        $recommendedManga = $this->getRecommendedManga($manga);
+        
         // Prepare the data for the view
         $mangaData = [
             'id' => $manga->id,
@@ -41,12 +138,13 @@ class MangaController extends Controller
             'view_count' => (int)($manga->view_count ?? 0),
             'is_adult' => (bool)($manga->is_adult ?? false),
             'is_suggestive' => (bool)($manga->is_suggestive ?? false),
-            'genres' => $manga->genres ?? [],
-            'themes' => $manga->themes ?? [],
+            'genres' => is_array($genres) ? $genres : [],
+            'themes' => is_array($themes) ? $themes : [],
             'demographic' => $manga->demographic ?? 'Seinen',
             'serialization' => $manga->serialization ?? 'Weekly Shonen Jump',
             'chapters' => $this->formatChapters($manga->chapters),
             'rating_distribution' => $this->generateRatingDistribution($manga->rating ?? 0, $manga->rating_count ?? 0),
+            'recommended_manga' => $recommendedManga,
             'reviews' => $this->generateSampleReviews(),
             'recommendations' => $this->generateSampleRecommendations()
         ];
@@ -155,17 +253,89 @@ class MangaController extends Controller
             return [];
         }
         
-        return $chapters->map(function($chapter) {
+        // If chapters is a Collection, convert to array
+        $chaptersArray = $chapters instanceof \Illuminate\Database\Eloquent\Collection 
+            ? $chapters->toArray() 
+            : (is_array($chapters) ? $chapters : []);
+        
+        // Process each chapter to ensure all required fields exist
+        $formattedChapters = array_map(function($chapter) {
+            // Handle both object and array access
+            $id = is_array($chapter) ? ($chapter['id'] ?? null) : ($chapter->id ?? null);
+            $number = is_array($chapter) ? ($chapter['number'] ?? 0) : ($chapter->number ?? 0);
+            $title = is_array($chapter) ? ($chapter['title'] ?? 'Sem título') : ($chapter->title ?? 'Sem título');
+            $volume = is_array($chapter) ? ($chapter['volume'] ?? null) : ($chapter->volume ?? null);
+            $pages = is_array($chapter) ? ($chapter['pages'] ?? 0) : ($chapter->pages ?? 0);
+            $createdAt = is_array($chapter) 
+                ? (isset($chapter['created_at']) ? (is_string($chapter['created_at']) ? \Carbon\Carbon::parse($chapter['created_at']) : $chapter['created_at']) : now())
+                : ($chapter->created_at ?? now());
+            
             return [
-                'id' => $chapter->id,
-                'number' => $chapter->number,
-                'title' => $chapter->title,
-                'volume' => $chapter->volume,
-                'pages' => $chapter->pages ?? 0,
-                'date' => $chapter->created_at ? $chapter->created_at->diffForHumans() : 'N/A',
-                'url' => route('chapter.show', ['id' => $chapter->id])
+                'id' => $id,
+                'number' => (float)$number,
+                'title' => $title,
+                'volume' => $volume ? (int)$volume : null,
+                'pages' => (int)$pages,
+                'date' => $createdAt->diffForHumans(),
+                'url' => route('chapter.show', ['id' => $id])
             ];
-        })->sortByDesc('number')->values()->all();
+        }, $chaptersArray);
+        
+        // Sort chapters by number in descending order
+        usort($formattedChapters, function($a, $b) {
+            return $b['number'] <=> $a['number']; // Sort by number in descending order
+        });
+        
+        return $formattedChapters;
+    }
+    
+    /**
+     * Get recommended manga based on genres and themes
+     *
+     * @param Manga $currentManga
+     * @param int $limit
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function getRecommendedManga($currentManga, $limit = 6)
+    {
+        // Get current manga's genres and themes
+        $currentGenres = is_array($currentManga->genres) ? $currentManga->genres : [];
+        $currentThemes = is_array($currentManga->themes) ? $currentManga->themes : [];
+        
+        if (empty($currentGenres) && empty($currentThemes)) {
+            // If no genres or themes, return popular manga
+            return Manga::where('id', '!=', $currentManga->id)
+                ->orderBy('view_count', 'desc')
+                ->limit($limit)
+                ->get();
+        }
+        
+        // Search for manga with similar genres or themes
+        return Manga::where('id', '!=', $currentManga->id)
+            ->where(function($query) use ($currentGenres, $currentThemes) {
+                if (!empty($currentGenres)) {
+                    $query->whereJsonContains('genres', $currentGenres[0]);
+                    
+                    for ($i = 1; $i < min(count($currentGenres), 3); $i++) {
+                        $query->orWhereJsonContains('genres', $currentGenres[$i]);
+                    }
+                }
+                
+                if (!empty($currentThemes)) {
+                    if (empty($currentGenres)) {
+                        $query->orWhereJsonContains('themes', $currentThemes[0]);
+                    } else {
+                        $query->orWhereJsonContains('themes', $currentThemes[0]);
+                    }
+                    
+                    for ($i = 1; $i < min(count($currentThemes), 2); $i++) {
+                        $query->orWhereJsonContains('themes', $currentThemes[$i]);
+                    }
+                }
+            })
+            ->orderBy('view_count', 'desc')
+            ->limit($limit)
+            ->get();
     }
     
     /**
@@ -211,53 +381,8 @@ class MangaController extends Controller
      */
     protected function generateSampleReviews()
     {
-        $reviews = [];
-        $reviewCount = rand(3, 8);
-        $reviewTexts = [
-            "A história é incrível e os personagens são muito bem desenvolvidos. A arte é linda e as cenas de ação são muito dinâmicas. Estou ansioso para os próximos capítulos!",
-            "Um dos melhores mangás que já li. A narrativa é envolvente e os personagens são muito bem construídos. Recomendo muito!",
-            "A arte é espetacular e a história é muito original. Vale cada minuto de leitura.",
-            "Comecei a ler sem muitas expectativas, mas fiquei impressionado com a qualidade. A evolução dos personagens é incrível.",
-            "A premissa é interessante, mas acho que o ritmo poderia ser mais rápido. Mesmo assim, estou gostando muito.",
-            "A arte é linda e a história é muito bem construída. Um dos meus favoritos do gênero.",
-            "Não consigo parar de ler! A cada capítulo fico mais envolvido com a história e os personagens.",
-            "A construção de mundo é incrível e os personagens são muito carismáticos. Recomendo muito!"
-        ];
-        
-        $names = ['João Silva', 'Maria Santos', 'Carlos Oliveira', 'Ana Pereira', 'Pedro Souza', 'Juliana Costa'];
-        
-        for ($i = 0; $i < $reviewCount; $i++) {
-            $rating = rand(3, 5);
-            $name = $names[array_rand($names)];
-            $initials = '';
-            $nameParts = explode(' ', $name);
-            foreach ($nameParts as $part) {
-                $initials .= strtoupper(substr($part, 0, 1));
-                if (strlen($initials) >= 2) break;
-            }
-            
-            $reviews[] = [
-                'id' => $i + 1,
-                'user' => [
-                    'name' => $name,
-                    'avatar' => null,
-                    'initials' => $initials
-                ],
-                'rating' => $rating,
-                'date' => $this->getRandomDate(),
-                'title' => $this->getReviewTitle($rating),
-                'content' => $reviewTexts[array_rand($reviewTexts)],
-                'likes' => rand(5, 100),
-                'replies' => rand(0, 15)
-            ];
-        }
-        
-        // Sort by rating (highest first)
-        usort($reviews, function($a, $b) {
-            return $b['rating'] <=> $a['rating'];
-        });
-        
-        return $reviews;
+        // Return empty array as we don't want to show any sample reviews
+        return [];
     }
     
     /**
