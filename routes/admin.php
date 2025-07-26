@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MangaController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\AuthorController;
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
@@ -11,6 +12,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Manga Management
     Route::resource('mangas', MangaController::class);
+    
+    // Author/Artist Management
+    Route::resource('authors', AuthorController::class);
     
     // Notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
