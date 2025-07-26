@@ -100,13 +100,37 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error:', error);
             if (resultsContainer) {
-                resultsContainer.innerHTML = `
-                    <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-                        <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">Ocorreu um erro</h3>
-                        <p class="text-gray-500 dark:text-gray-400">Não foi possível carregar os resultados. Tente novamente.</p>
-                    </div>
-                `;
+                // Create main error container
+                const errorContainer = document.createElement('div');
+                errorContainer.className = 'text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow';
+                
+                // Create and append icon
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-exclamation-triangle text-4xl text-red-500 mb-4';
+                errorContainer.appendChild(icon);
+                
+                // Create and append heading
+                const heading = document.createElement('h3');
+                heading.className = 'text-lg font-medium text-gray-900 dark:text-white mb-1';
+                heading.textContent = 'Ocorreu um erro';
+                errorContainer.appendChild(heading);
+                
+                // Create and append error message
+                const message = document.createElement('p');
+                message.className = 'text-gray-500 dark:text-gray-400';
+                message.textContent = 'Não foi possível carregar os resultados. Tente novamente.';
+                errorContainer.appendChild(message);
+                
+                // Create and append reload button
+                const reloadButton = document.createElement('button');
+                reloadButton.className = 'mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors';
+                reloadButton.textContent = 'Tentar novamente';
+                reloadButton.addEventListener('click', () => window.location.reload());
+                errorContainer.appendChild(reloadButton);
+                
+                // Clear previous content and append new error container
+                resultsContainer.innerHTML = '';
+                resultsContainer.appendChild(errorContainer);
             }
         });
     }
