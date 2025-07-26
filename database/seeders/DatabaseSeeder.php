@@ -9,7 +9,9 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seeds the application's database by ensuring an admin user exists and running additional seeders.
+     *
+     * Creates an admin user with a default email and password if one does not already exist, then executes the `AdminUserSeeder` and `GenreSeeder` to populate related data.
      */
     public function run(): void
     {

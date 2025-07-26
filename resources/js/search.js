@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!searchForm) return;
     
-    // Debounce function to limit how often the search runs
+    /**
+     * Returns a debounced version of the provided function that delays its execution until after a specified wait time has elapsed since the last invocation.
+     * @param {Function} func - The function to debounce.
+     * @param {number} wait - The number of milliseconds to delay.
+     * @return {Function} A debounced function.
+     */
     function debounce(func, wait) {
         let timeout;
         return function() {
@@ -21,7 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
     
-    // Handle form submission
+    /**
+     * Handles dynamic search form submission and filter changes, updating results via AJAX without reloading the page.
+     *
+     * Prevents default form submission, serializes form data into URL parameters, updates the browser URL, displays a loading indicator, and fetches updated results asynchronously. Also manages pagination link clicks within the results, synchronizing form state and URL, and ensures smooth scrolling to the top after loading new results. Displays an error message if the AJAX request fails.
+     * @param {Event} [event] - The event object from form submission or input/filter change.
+     */
     function handleSearch(event) {
         if (event) {
             event.preventDefault();

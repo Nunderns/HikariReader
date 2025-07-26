@@ -10,6 +10,13 @@ class ShowDbConfig extends Command
     protected $signature = 'db:show-config';
     protected $description = 'Show the current database configuration';
 
+    /**
+     * Displays the current database configuration and related environment variables in the console.
+     *
+     * Outputs the default database connection name, its configuration details (driver, host, port, database, username), and the corresponding environment variables. The database password is masked for security. Returns 0 upon successful execution.
+     *
+     * @return int Exit code 0 on success.
+     */
     public function handle()
     {
         $connection = config('database.default');
