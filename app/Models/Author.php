@@ -13,15 +13,12 @@ class Author extends Model
         'biography',
         'is_artist',
         'is_writer',
-        'birth_date',
-        'website',
         'twitter',
     ];
 
     protected $casts = [
         'is_artist' => 'boolean',
         'is_writer' => 'boolean',
-        'birth_date' => 'date',
     ];
 
     public function mangas(): BelongsToMany

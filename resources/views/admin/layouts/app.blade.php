@@ -59,12 +59,13 @@
                             <a href="{{ route('admin.genres.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.genres.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
                                 <i class="fas fa-tags mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Gêneros
-                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-yellow-500 dark:bg-yellow-600 text-white">{{ $counts['genres'] ?? 0 }}</span>
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-purple-500 dark:bg-purple-600 text-white">{{ $counts['genres'] ?? 0 }}</span>
                             </a>
                             
-                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
-                                <i class="fas fa-paint-brush mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
-                                Artistas
+                            <a href="{{ route('admin.authors.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.authors.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
+                                <i class="fas fa-users mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Autores/Artistas
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-pink-500 dark:bg-pink-600 text-white">{{ $counts['authors'] ?? 0 }}</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
