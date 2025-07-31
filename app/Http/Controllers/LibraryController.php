@@ -67,16 +67,18 @@ class LibraryController extends Controller
         // Paginar resultados
         $mangas = $query->paginate(20)->appends(request()->query());
 
-        // Contagem de mangás por status
-        $statusCounts = [
-            'all' => $user->libraryEntries()->count(),
-            'reading' => $user->libraryEntries()->where('status', 'reading')->count(),
-            'completed' => $user->libraryEntries()->where('status', 'completed')->count(),
-            'on_hold' => $user->libraryEntries()->where('status', 'on_hold')->count(),
-            'dropped' => $user->libraryEntries()->where('status', 'dropped')->count(),
-            'plan_to_read' => $user->libraryEntries()->where('status', 'plan_to_read')->count(),
-            'rereading' => $user->libraryEntries()->where('status', 'rereading')->count(),
-        ];
+        // Contagem de mangás por status otimizada em uma única consulta
+        $statusCounts = $user->libraryEntries()
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $statusCounts['all'] = array_sum($statusCounts);
+
+        foreach (['reading', 'completed', 'on_hold', 'dropped', 'plan_to_read', 'rereading'] as $statusKey) {
+            $statusCounts[$statusKey] = $statusCounts[$statusKey] ?? 0;
+        }
 
         // Se for uma requisição AJAX, retorna JSON
         if (request()->wantsJson()) {
