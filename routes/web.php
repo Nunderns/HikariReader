@@ -5,11 +5,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MangaController;
+use App\Http\Controllers\AboutController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [MangaController::class, 'search'])->name('manga.search');
-Route::get('/sobre', [HomeController::class, 'about'])->name('about');
+Route::get('/sobre', [AboutController::class, 'index'])->name('about');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/recent-additions', [HomeController::class, 'recentAdditions'])->name('recent.additions');
 
