@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Gerenciamento de Usuários</h1>
+        <h1 class="text-2xl font-bold text-white">Gerenciamento de Usuários</h1>
     </div>
 
     <!-- Search and Filter -->

@@ -15,7 +15,7 @@
                 <div class="sm:col-span-4">
                     <label for="title" class="block text-sm font-medium text-gray-700">Título *</label>
                     <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                           class="mt-1 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -25,7 +25,7 @@
                 <div class="sm:col-span-4">
                     <label for="english_title" class="block text-sm font-medium text-gray-700">Título em Inglês</label>
                     <input type="text" name="english_title" id="english_title" value="{{ old('english_title') }}"
-                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                           class="mt-1 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     @error('english_title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -35,7 +35,7 @@
                 <div class="sm:col-span-4">
                     <label for="author" class="block text-sm font-medium text-gray-700">Autor *</label>
                     <input type="text" name="author" id="author" value="{{ old('author') }}" required
-                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                           class="mt-1 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     @error('author')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -45,7 +45,7 @@
                 <div class="sm:col-span-4">
                     <label for="artist" class="block text-sm font-medium text-gray-700">Artista</label>
                     <input type="text" name="artist" id="artist" value="{{ old('artist') }}"
-                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                           class="mt-1 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     @error('artist')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -58,7 +58,7 @@
                         <span class="inline-block h-40 w-32 rounded overflow-hidden bg-gray-100">
                             <img id="cover-preview" src="https://via.placeholder.com/200x300?text=Sem+Imagem" alt="Pré-visualização da capa" class="h-full w-full object-cover">
                         </span>
-                        <input type="file" name="cover" id="cover" accept="image/*" class="ml-5 block text-sm text-gray-500" onchange="previewCover(this)">
+                        <input type="file" name="cover" id="cover" accept="image/*" class="ml-5 block text-sm text-gray-900" onchange="previewCover(this)">
                     </div>
                     <p class="mt-2 text-sm text-gray-500">Imagem em formato JPG, PNG ou GIF (máx. 2MB)</p>
                     @error('cover')
@@ -71,7 +71,7 @@
                     <label for="description" class="block text-sm font-medium text-gray-700">Descrição *</label>
                     <div class="mt-1">
                         <textarea id="description" name="description" rows="6" required
-                                  class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{ old('description') }}</textarea>
+                                  class="text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full sm:text-sm border border-gray-300 rounded-md">{{ old('description') }}</textarea>
                     </div>
                     <p class="mt-2 text-sm text-gray-500">Forneça uma descrição detalhada do mangá.</p>
                     @error('description')
@@ -83,7 +83,7 @@
                 <div class="sm:col-span-3">
                     <label for="status" class="block text-sm font-medium text-gray-700">Status *</label>
                     <select id="status" name="status" required
-                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            class="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent sm:text-sm rounded-md">
                         <option value="" disabled selected>Selecione um status</option>
                         <option value="ongoing" {{ old('status') == 'ongoing' ? 'selected' : '' }}>Em andamento</option>
                         <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completo</option>
@@ -137,7 +137,7 @@
                                 'Mistério', 'Romance', 'Sci-Fi', 'Sobrenatural', 'Esportes', 'Suspense',
                                 'Slice of Life', 'Comédia Romântica', 'Artes Marciais', 'Escolar', 'Vida Diária'
                             ];
-                            $selectedGenres = old('genres', []);
+                            $selectedGenres = is_array(old('genres')) ? old('genres') : [];
                         @endphp
                         
                         @foreach($genres as $genre)
@@ -159,8 +159,16 @@
                 <!-- Temas -->
                 <div class="sm:col-span-6">
                     <label for="themes" class="block text-sm font-medium text-gray-700">Temas (separados por vírgula)</label>
-                    <input type="text" name="themes" id="themes" value="{{ old('themes') }}"
-                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    @php
+                        $themesValue = '';
+                        if (is_array(old('themes'))) {
+                            $themesValue = implode(', ', old('themes'));
+                        } elseif (is_string(old('themes'))) {
+                            $themesValue = old('themes');
+                        }
+                    @endphp
+                    <input type="text" name="themes" id="themes" value="{{ $themesValue }}"
+                           class="text-gray-900 mt-1 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     <p class="mt-1 text-sm text-gray-500">Ex: Ação, Aventura, Comédia, Drama, Fantasia</p>
                     @error('themes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -170,8 +178,16 @@
                 <!-- Títulos Alternativos -->
                 <div class="sm:col-span-6">
                     <label for="alt_titles" class="block text-sm font-medium text-gray-700">Títulos Alternativos (um por linha)</label>
+                    @php
+                        $altTitlesValue = '';
+                        if (is_array(old('alt_titles'))) {
+                            $altTitlesValue = implode("\n", old('alt_titles'));
+                        } elseif (is_string(old('alt_titles'))) {
+                            $altTitlesValue = old('alt_titles');
+                        }
+                    @endphp
                     <textarea id="alt_titles" name="alt_titles" rows="3"
-                              class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md">{{ old('alt_titles') }}</textarea>
+                              class="text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:border-transparent block w-full sm:text-sm border border-gray-300 rounded-md">{{ $altTitlesValue }}</textarea>
                     <p class="mt-1 text-sm text-gray-500">Um título por linha</p>
                     @error('alt_titles')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
