@@ -18,7 +18,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100">
     <!-- Sidebar -->
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900">
         <!-- Sidebar -->
@@ -47,36 +47,25 @@
                             <a href="{{ route('admin.mangas.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.mangas.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
                                 <i class="fas fa-book mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Mangás
-                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-green-500 text-white">{{ \App\Models\Manga::count() }}</span>
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-green-500 text-white">{{ $counts['mangas'] ?? 0 }}</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
                                 <i class="fas fa-list-ol mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Capítulos
-                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-blue-500 dark:bg-blue-600 text-white">{{ \App\Models\Chapter::count() }}</span>
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-blue-500 dark:bg-blue-600 text-white">{{ $counts['chapters'] ?? 0 }}</span>
                             </a>
                             
                             <a href="{{ route('admin.genres.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.genres.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
                                 <i class="fas fa-tags mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Gêneros
-                                @php
-                                    $genresCount = \App\Models\Manga::whereNotNull('genres')
-                                        ->selectRaw('COUNT(DISTINCT JSON_UNQUOTE(JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')))) as count')
-                                        ->join(
-                                            DB::raw('(SELECT 0 as gen UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) numbers'),
-                                            function($join) {
-                                                $join->on(DB::raw('JSON_LENGTH(genres)'), '>', 'numbers.gen')
-                                                    ->whereRaw('JSON_EXTRACT(genres, CONCAT(\'$[\', numbers.gen, \']\')) IS NOT NULL');
-                                            }
-                                        )
-                                        ->first()->count ?? 0;
-                                @endphp
-                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-yellow-500 dark:bg-yellow-600 text-white">{{ $genresCount }}</span>
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-purple-500 dark:bg-purple-600 text-white">{{ $counts['genres'] ?? 0 }}</span>
                             </a>
                             
-                            <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
-                                <i class="fas fa-paint-brush mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
-                                Artistas
+                            <a href="{{ route('admin.authors.index') }}" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('admin.authors.*') ? 'bg-indigo-800 dark:bg-gray-700 text-white' : 'text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700' }}">
+                                <i class="fas fa-users mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
+                                Autores/Artistas
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-pink-500 dark:bg-pink-600 text-white">{{ $counts['authors'] ?? 0 }}</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
@@ -93,7 +82,7 @@
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
                                 <i class="fas fa-users mr-3 w-5 text-center text-indigo-300 dark:text-indigo-400"></i>
                                 Usuários
-                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-purple-500 dark:bg-purple-600 text-white">{{ \App\Models\User::count() }}</span>
+                                <span class="ml-auto px-2 py-0.5 text-xs rounded-full bg-purple-500 dark:bg-purple-600 text-white">{{ $counts['users'] ?? 0 }}</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-md transition-colors text-indigo-100 dark:text-gray-200 hover:bg-indigo-700 dark:hover:bg-gray-700">
@@ -157,7 +146,7 @@
         <!-- Main Content -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <!-- Top Navigation -->
-            <header class="bg-white shadow-sm z-10">
+            <header class="bg-white shadow-sm z-10 text-gray-800">
                 <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <!-- Botão do menu móvel -->
                     <button @click="sidebarOpen = !sidebarOpen" class="md:hidden text-gray-500 hover:text-gray-600 focus:outline-none">
@@ -209,7 +198,7 @@
                                     style="display: none;"
                                 >
                                     <div class="px-4 py-3 flex items-center justify-between border-b border-gray-200">
-                                        <p class="text-sm font-medium text-gray-900">Notificações</p>
+                                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">Notificações</p>
                                         @if(auth()->user()->unreadNotifications->count() > 0)
                                             <button 
                                                 @click="markAllNotificationsAsRead(); open = false;" 

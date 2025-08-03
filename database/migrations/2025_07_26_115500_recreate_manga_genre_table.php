@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Recreates the `manga_genre` pivot table with foreign key constraints and a unique manga-genre pairing.
+     *
+     * Drops the existing `manga_genre` table if it exists, then creates a new table with an auto-incrementing primary key, foreign keys to the `manga` and `genre` tables (with cascading deletes), timestamp columns, and a unique constraint to prevent duplicate manga-genre associations.
      */
     public function up(): void
     {
@@ -27,7 +29,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Drops the `manga_genre` table, reversing the migration.
      */
     public function down(): void
     {

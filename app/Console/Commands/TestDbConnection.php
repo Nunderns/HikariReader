@@ -23,7 +23,11 @@ class TestDbConnection extends Command
     protected $description = 'Test the database connection';
 
     /**
-     * Execute the console command.
+     * Tests the application's database connection and outputs the result.
+     *
+     * Displays the current database connection configuration, attempts to establish a connection, and reports success or failure with relevant details.
+     *
+     * @return int Returns 0 if the connection is successful, or 1 if it fails.
      */
     public function handle()
     {

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Drops the 'manga_genre' table from the database if it exists.
      */
     public function up(): void
     {
@@ -14,7 +14,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Leaves the migration rollback empty, intentionally not recreating the dropped table.
      */
     public function down(): void
     {

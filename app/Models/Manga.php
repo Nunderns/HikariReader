@@ -32,7 +32,9 @@ class Manga extends Model
     ];
     
     /**
-     * The genres that belong to the manga.
+     * Defines a many-to-many relationship between the manga and its genres.
+     *
+     * @return BelongsToMany The relationship instance for genres associated with the manga.
      */
     public function genres(): BelongsToMany
     {
@@ -96,7 +98,11 @@ class Manga extends Model
     }
     
     /**
-     * The artists that belong to the manga.
+     * Returns the artists associated with the manga.
+     *
+     * Defines a many-to-many relationship with the Author model, filtered to include only those with the 'artist' role.
+     *
+     * @return BelongsToMany
      */
     public function artists(): BelongsToMany
     {
@@ -106,11 +112,10 @@ class Manga extends Model
     }
     
     /**
-     * Scope a query to search mangas by title, author, or artist.
+     * Filters the query to include mangas matching the search term in the title, English title, author, or artist fields.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $search
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param string|null $search The search term to match against manga attributes.
+     * @return \Illuminate\Database\Eloquent\Builder The modified query builder.
      */
     public function scopeSearch($query, $search = null)
     {
@@ -126,11 +131,12 @@ class Manga extends Model
         });
     }
     
-    /**
-     * Scope a query to filter mangas by status.
+    /****
+     * Filters the query to include only mangas with the specified status.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $status
+     * If the status is null or 'all', no filtering is applied.
+     *
+     * @param string|null $status The status to filter by, or null/'all' for no filtering.
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeByStatus($query, $status = null)
@@ -143,10 +149,9 @@ class Manga extends Model
     }
     
     /**
-     * Scope a query to filter mangas by genre.
+     * Filters the query to include only mangas that contain the specified genre in their genres attribute.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|null  $genre
+     * @param string|null $genre The genre to filter by, or null/'all' to disable filtering.
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeByGenre($query, $genre = null)
@@ -159,11 +164,12 @@ class Manga extends Model
     }
     
     /**
-     * Scope a query to order mangas by a given field.
+     * Applies ordering to the manga query based on the specified sort option.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $sortBy
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Supported sort options are 'title' (ascending), 'rating' (descending), 'views' (descending), and 'latest' (most recently created or updated).
+     *
+     * @param string $sortBy The field to sort by: 'title', 'rating', 'views', or 'latest'.
+     * @return \Illuminate\Database\Eloquent\Builder The modified query builder.
      */
     public function scopeOrderBySort($query, $sortBy = 'latest')
     {

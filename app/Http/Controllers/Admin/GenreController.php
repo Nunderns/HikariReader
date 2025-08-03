@@ -11,7 +11,9 @@ use Illuminate\Validation\Rule;
 class GenreController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Displays a list of all genres ordered by name in the admin panel.
+     *
+     * @return \Illuminate\View\View The view displaying the list of genres.
      */
     public function index()
     {
@@ -20,7 +22,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Displays the form for creating a new genre.
+     *
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -28,7 +32,9 @@ class GenreController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Validates and creates a new genre using the provided request data.
+     *
+     * Redirects to the genres index page with a success message upon successful creation.
      */
     public function store(Request $request)
     {
@@ -45,7 +51,10 @@ class GenreController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Displays the form for editing the specified genre.
+     *
+     * @param Genre $genre The genre to edit.
+     * @return \Illuminate\View\View
      */
     public function edit(Genre $genre)
     {
@@ -53,7 +62,11 @@ class GenreController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Updates an existing genre with validated data and redirects to the genres index with a success message.
+     *
+     * @param Request $request The HTTP request containing updated genre data.
+     * @param Genre $genre The genre instance to update.
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Genre $genre)
     {
@@ -80,7 +93,10 @@ class GenreController extends Controller
     }
 
     /**
-     * Show the confirmation page for deleting a resource.
+     * Displays a confirmation page for deleting the specified genre, including the count of associated mangas.
+     *
+     * @param Genre $genre The genre to be considered for deletion.
+     * @return \Illuminate\View\View
      */
     public function confirmDelete(Genre $genre)
     {
@@ -92,7 +108,12 @@ class GenreController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deletes the specified genre and detaches all associated mangas.
+     *
+     * Redirects to the genres index page with a success message after deletion.
+     *
+     * @param Genre $genre The genre to be deleted.
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Genre $genre)
     {
@@ -100,6 +121,13 @@ class GenreController extends Controller
         $genre->mangas()->detach();
         
         $genre->delete();
+
+        DB::transaction(function () use ($genre) {
+            // Detach all relationships with mangas before deleting
+            $genre->mangas()->detach();
+            
+            $genre->delete();
+        });
 
         return redirect()->route('admin.genres.index')
             ->with('success', 'Gênero excluído com sucesso!');

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Genre extends Model
+class Artist extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -16,12 +16,23 @@ class Genre extends Model
         'name',
         'slug',
         'description',
+        'website',
+        'twitter',
+        'pixiv',
+        'other_links',
     ];
 
-    /****
-     * Defines a many-to-many relationship between the genre and mangas.
+    /**
+     * The attributes that should be cast.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany The mangas associated with this genre.
+     * @var array
+     */
+    protected $casts = [
+        'other_links' => 'array',
+    ];
+
+    /**
+     * Get all of the mangas for the artist.
      */
     public function mangas(): BelongsToMany
     {

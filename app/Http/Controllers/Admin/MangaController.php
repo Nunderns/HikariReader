@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Notification;
 class MangaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Retrieves a paginated list of mangas with optional filtering by search term, status, and genre.
+     *
+     * Passes the filtered mangas, available genres, and status options to the admin manga index view.
      *
      * @return \Illuminate\Http\Response
      */
@@ -40,16 +42,8 @@ class MangaController extends Controller
         
         $mangas = $query->latest()->paginate(15)->withQueryString();
         
-        // Get unique genres for filter dropdown
-        $allGenres = Manga::select('genres')
-            ->whereNotNull('genres')
-            ->get()
-            ->flatMap(function ($manga) {
-                return json_decode($manga->genres, true) ?? [];
-            })
-            ->unique()
-            ->sort()
-            ->values();
+        // Get genres from the genres table
+        $allGenres = \App\Models\Genre::orderBy('name')->pluck('name');
             
         // Status options
         $statuses = [
