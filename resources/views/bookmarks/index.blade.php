@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('My Bookmarks') }}</div>
+                <div class="card-header text-white">{{ __('My Bookmarks') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -23,7 +23,7 @@
                                         <small>{{ $bookmark->created_at->diffForHumans() }}</small>
                                     </div>
                                     <p class="mb-1">{{ $bookmark->description }}</p>
-                                    <small>Click to open</small>
+                                    <small class="text-white">Click to open</small>
                                 </a>
                             @endforeach
                         </div>
@@ -32,7 +32,7 @@
                             {{ $bookmarks->links() }}
                         </div>
                     @else
-                        <div class="alert alert-info">
+                        <div class="alert alert-info text-white">
                             {{ __('You have no bookmarks yet.') }}
                         </div>
                     @endif

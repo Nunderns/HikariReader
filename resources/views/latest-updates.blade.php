@@ -6,7 +6,7 @@
         <!-- Main Content -->
         <div class="lg:w-3/4">
             <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h1 class="text-2xl font-bold text-gray-800 mb-6">Últimas Atualizações</h1>
+                <h1 class="text-2xl font-bold text-white mb-6">Últimas Atualizações</h1>
                 
                 <!-- Latest Chapters List -->
                 <div class="space-y-4">
@@ -21,23 +21,23 @@
                             
                             <!-- Chapter Info -->
                             <div class="ml-4 flex-1 min-w-0">
-                                <h3 class="text-lg font-semibold text-gray-900 truncate">
-                                    <a href="{{ route('manga.show', $chapter->manga) }}" class="hover:text-indigo-600">
+                                <h3 class="text-lg font-semibold text-white truncate">
+                                    <a href="{{ route('manga.show', $chapter->manga) }}" class="text-white hover:text-indigo-300">
                                         {{ $chapter->manga->title }}
                                     </a>
                                 </h3>
-                                <div class="flex items-center text-sm text-gray-500">
+                                <div class="flex items-center text-sm text-gray-300">
                                     <a href="{{ route('chapter.show', [$chapter->manga, $chapter]) }}" 
-                                       class="font-medium text-indigo-600 hover:text-indigo-800">
+                                       class="font-medium text-indigo-300 hover:text-indigo-100">
                                         Capítulo {{ $chapter->chapter_number }}
                                         @if($chapter->title)
                                             : {{ $chapter->title }}
                                         @endif
                                     </a>
-                                    <span class="mx-2">•</span>
-                                    <span>{{ $chapter->created_at->diffForHumans() }}</span>
-                                    <span class="mx-2">•</span>
-                                    <span>{{ $chapter->manga->chapters_count }} capítulos</span>
+                                    <span class="mx-2 text-gray-400">•</span>
+                                    <span class="text-gray-300">{{ $chapter->created_at->diffForHumans() }}</span>
+                                    <span class="mx-2 text-gray-400">•</span>
+                                    <span class="text-gray-300">{{ $chapter->manga->chapters_count }} capítulos</span>
                                 </div>
                                 
                                 <!-- Tags -->
@@ -77,8 +77,8 @@
         <!-- Sidebar -->
         <div class="lg:w-1/4">
             <!-- Recently Updated Mangas -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">Mangás Recentes</h2>
+            <div class="bg-white bg-opacity-10 rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-lg font-semibold text-white mb-4">Mangás Recentes</h2>
                 <div class="space-y-4">
                     @foreach($mangas as $manga)
                         <div class="flex items-center">
